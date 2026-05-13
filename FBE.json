@@ -1,0 +1,11 @@
+{
+  "id": "FBE",
+  "name": "FBE",
+  "author": "Flaaax",
+  "description": "Flaaax's Content Mod for SLS2",
+  "version": "1.0.1",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [],
+  "affects_gameplay": true
+}
