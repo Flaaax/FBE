@@ -2,6 +2,7 @@ using System.Diagnostics;
 using FBE.Scripts.Cards;
 using FBE.Scripts.Relics;
 using FBE.Scripts.Utils;
+using Godot;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -18,6 +19,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Audio;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
@@ -33,6 +35,7 @@ public sealed class DevilRoom : FBEEventModel
     private const string DevilRoomMusicPath = "res://FBE/audio/deal with the devil.ogg";
 
     private bool _gameBgmSuppressed;
+    private bool _runExitCleanupRegistered;
 
     public override string CustomInitialPortraitPath => "res://FBE/images/events/DevilRoom1.png";
 
@@ -442,15 +445,17 @@ public sealed class DevilRoom : FBEEventModel
         }
 
         AudioHelper.PlayLoop(DevilRoomMusicPath);
+        RegisterRunExitCleanup();
     }
 
     private void StopDevilRoomMusic()
     {
-        if (!IsLocalOwner())
+        if (!IsLocalOwner() && !_runExitCleanupRegistered)
         {
             return;
         }
 
+        UnregisterRunExitCleanup();
         AudioHelper.StopLoop(DevilRoomMusicPath);
 
         if (!_gameBgmSuppressed)
@@ -460,6 +465,39 @@ public sealed class DevilRoom : FBEEventModel
 
         NAudioManager.Instance?.SetBgmVol(SaveManager.Instance.SettingsSave.VolumeBgm);
         _gameBgmSuppressed = false;
+    }
+
+    private void RegisterRunExitCleanup()
+    {
+        if (_runExitCleanupRegistered)
+        {
+            return;
+        }
+
+        var run = NRun.Instance;
+        if (run == null)
+        {
+            return;
+        }
+
+        run.TreeExiting += StopDevilRoomMusic;
+        _runExitCleanupRegistered = true;
+    }
+
+    private void UnregisterRunExitCleanup()
+    {
+        if (!_runExitCleanupRegistered)
+        {
+            return;
+        }
+
+        var run = NRun.Instance;
+        if (run != null && GodotObject.IsInstanceValid(run))
+        {
+            run.TreeExiting -= StopDevilRoomMusic;
+        }
+
+        _runExitCleanupRegistered = false;
     }
 
     private void PlayLocalSfx(string audioPath)

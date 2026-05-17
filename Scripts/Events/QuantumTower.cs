@@ -36,6 +36,7 @@ namespace FBE.Scripts.Events;
 public sealed class QuantumTower : FBEEventModel
 {
     private bool _gameBgmSuppressed;
+    private bool _runExitCleanupRegistered;
 
     // 背景图位置
     public override string CustomInitialPortraitPath => NoTowerPortrait;
@@ -65,6 +66,7 @@ public sealed class QuantumTower : FBEEventModel
     {
         if (!IsLocalOwner())
         {
+            onBlack.Invoke();
             return;
         }
 
@@ -147,15 +149,17 @@ public sealed class QuantumTower : FBEEventModel
         }
 
         AudioHelper.PlayLoop(MusicPath);
+        RegisterRunExitCleanup();
     }
 
     private void StopMusic()
     {
-        if (!IsLocalOwner())
+        if (!IsLocalOwner() && !_runExitCleanupRegistered)
         {
             return;
         }
 
+        UnregisterRunExitCleanup();
         AudioHelper.StopLoop(MusicPath);
 
         if (!_gameBgmSuppressed)
@@ -165,5 +169,38 @@ public sealed class QuantumTower : FBEEventModel
 
         NAudioManager.Instance?.SetBgmVol(SaveManager.Instance.SettingsSave.VolumeBgm);
         _gameBgmSuppressed = false;
+    }
+
+    private void RegisterRunExitCleanup()
+    {
+        if (_runExitCleanupRegistered)
+        {
+            return;
+        }
+
+        var run = NRun.Instance;
+        if (run == null)
+        {
+            return;
+        }
+
+        run.TreeExiting += StopMusic;
+        _runExitCleanupRegistered = true;
+    }
+
+    private void UnregisterRunExitCleanup()
+    {
+        if (!_runExitCleanupRegistered)
+        {
+            return;
+        }
+
+        var run = NRun.Instance;
+        if (run != null && GodotObject.IsInstanceValid(run))
+        {
+            run.TreeExiting -= StopMusic;
+        }
+
+        _runExitCleanupRegistered = false;
     }
 }

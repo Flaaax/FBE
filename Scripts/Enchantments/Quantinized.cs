@@ -39,7 +39,7 @@ public class Quantinized : FBEEnchantmentModel
         var targetPool = rng.NextFloat() <= 0.75 ? _pool : rng.NextItem(otherPools);
 
         var options = targetPool?.GetUnlockedCards(Card.Owner.UnlockState, Card.RunState!.CardMultiplayerConstraint)
-            .Where(c => c.Id != Card.Id && c.IsTransformable && c.Rarity != CardRarity.Basic) ?? [];
+            .Where(c => c.Id != Card.Id && c.IsRemovable && c.IsTransformable && c.Rarity != CardRarity.Basic) ?? [];
         var canonicalTarget = rng.NextItem(options) ??
                               throw new InvalidOperationException($"No valid card for {Card.Title} to transform!");
 
@@ -61,7 +61,11 @@ public class Quantinized : FBEEnchantmentModel
 
         if (result is { success: true })
         {
-            CardCmd.Enchant<Quantinized>(result.Value.cardAdded, 1m);
+            var cardAdded = result.Value.cardAdded;
+            if (ModelDb.Enchantment<Quantinized>().CanEnchant(cardAdded))
+            {
+                CardCmd.Enchant<Quantinized>(cardAdded, 1m);
+            }
         }
     }
 
