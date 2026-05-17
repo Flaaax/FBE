@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using FBE.Scripts.Cards;
+using FBE.Scripts.Enchantments;
 using FBE.Scripts.Relics;
 using FBE.Scripts.Utils;
+using Godot;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -12,15 +14,18 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Audio;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
@@ -40,8 +45,8 @@ public sealed class QuantumTower : FBEEventModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new IntVar("Count", 6),
-        new StringVar("Enchantment", "占位符")
+        new IntVar("Count", 5),
+        new StringVar("Enchantment", ModelDb.Enchantment<Quantinized>().Title.GetFormattedText())
     ];
 
     public override void OnRoomEnter()
@@ -54,42 +59,77 @@ public sealed class QuantumTower : FBEEventModel
         StopMusic();
     }
 
-    // public override void CalculateVars()
-    // {
-    //     DynamicVars.Gold.BaseValue = Rng.NextInt(235, 265);
-    // }
+    public override bool IsAllowed(IRunState runState) => runState.CurrentActIndex <= 1 || true;
 
-    public override bool IsAllowed(IRunState runState) => runState.CurrentActIndex <= 1;
+    private async Task DoBlinkVfx(Action onBlack)
+    {
+        if (!IsLocalOwner())
+        {
+            return;
+        }
+
+        var overlay = new ColorRect { Color = new Color(0f, 0f, 0f, 0f), MouseFilter = Control.MouseFilterEnum.Ignore };
+        overlay.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+        NGame.Instance!.AddChildSafely(overlay);
+        var tween = overlay.CreateTween();
+        tween.TweenProperty(overlay, "color:a", 0.95f, 0.35);
+        tween.TweenProperty(overlay, "color:a", 0.95f, 0.1);
+        tween.TweenProperty(overlay, "color:a", 0f, 0.45);
+        await Cmd.Wait(0.35f);
+        onBlack.Invoke();
+        await Cmd.Wait(0.6f);
+        overlay.QueueFreeSafely();
+    }
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() =>
     [
         Option(Blink)
     ];
 
-    private Task Blink()
+    private async Task Blink()
     {
-        SetLocalPortrait(TowerPortrait);
-        SetEventState(PageDescription("BLINK"), [
-            //todo Add hover tip
-            Option(EnterTower, [], "BLINK"),
-            Option(BlinkAgain, [], "BLINK")
-        ]);
-        return Task.CompletedTask;
+        await DoBlinkVfx(() =>
+        {
+            SetLocalPortrait(TowerPortrait);
+            SetEventState(PageDescription("BLINK"), [
+                Option(EnterTower, HoverTipFactory.FromEnchantment<Quantinized>(), "BLINK"),
+                Option(BlinkAgain, [], "BLINK")
+            ]);
+        });
     }
 
     private async Task EnterTower()
     {
-        //todo do some logic...
+        var prompt = L10NLookup("FBE-QUANTUM_TOWER.selectionScreenPrompt");
+        prompt.Add(DynamicVars["Count"]);
+        prompt.Add(DynamicVars["Enchantment"]);
+        var count = DynamicVars["Count"].IntValue;
+        var perfs = new CardSelectorPrefs(prompt, count, count);
 
-        SetLocalPortrait(NoTowerPortrait);
-        SetEventFinished(PageDescription("ENTER_TOWER_CHOSEN"));
+        var enchantment = ModelDb.Enchantment<Quantinized>();
+
+        var selectedCards = await CardSelectCmd.FromDeckGeneric(Owner!, perfs, enchantment.CanEnchant);
+
+        foreach (var card in selectedCards)
+        {
+            CardCmd.Enchant<Quantinized>(card, 1m);
+            await ((Quantinized)card.Enchantment!).TransformSelf();
+        }
+
+        await DoBlinkVfx(() =>
+        {
+            SetLocalPortrait(NoTowerPortrait);
+            SetEventFinished(PageDescription("ENTER_TOWER_CHOSEN"));
+        });
     }
 
-    private Task BlinkAgain()
+    private async Task BlinkAgain()
     {
-        SetLocalPortrait(NoTowerPortrait);
-        SetEventFinished(PageDescription("BLINK_AGAIN_CHOSEN"));
-        return Task.CompletedTask;
+        await DoBlinkVfx(() =>
+        {
+            SetLocalPortrait(NoTowerPortrait);
+            SetEventFinished(PageDescription("BLINK_AGAIN_CHOSEN"));
+        });
     }
 
     private void StartMusic()

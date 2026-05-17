@@ -87,10 +87,11 @@
   "FBE-QUANTUM_TOWER.pages.INITIAL.options.BLINK.description": "...",
   "FBE-QUANTUM_TOWER.pages.BLINK.description": "这应该不会改变任何事，但是...\n\n这里之前有一座[purple]塔[/purple]吗？",
   "FBE-QUANTUM_TOWER.pages.BLINK.options.ENTER_TOWER.title": "进入塔内",
-  "FBE-QUANTUM_TOWER.pages.BLINK.options.ENTER_TOWER.description": "选择至多{Count}张牌[gold]附魔[/gold]：[purple]{Enchantment}[/purple]。",
+  "FBE-QUANTUM_TOWER.pages.BLINK.options.ENTER_TOWER.description": "选择{Count}张牌[gold]附魔[/gold]：[purple]{Enchantment}[/purple]。",
   "FBE-QUANTUM_TOWER.pages.BLINK.options.BLINK_AGAIN.title": "再次眨眼",
-  "FBE-QUANTUM_TOWER.pages.BLINK.options.BLINK_AGAIN.description": "",
-  "FBE-QUANTUM_TOWER.pages.ENTER_TOWER_CHOSEN.description":"你从塔内找到了一些用[green]奇异文字[/green]撰写的文献。\n[jitter]你感觉脑子一片混乱[/jitter]，踉跄着退了出来。\n\n回头望去，[sine]那里只留下了一片空地。[/sine]",
-  "FBE-QUANTUM_TOWER.pages.BLINK_AGAIN_CHOSEN.description": "根本没有什么[purple]塔[/purple]。\n\n你应该只是太累了。"
+  "FBE-QUANTUM_TOWER.pages.BLINK.options.BLINK_AGAIN.description": "...",
+  "FBE-QUANTUM_TOWER.pages.ENTER_TOWER_CHOSEN.description":"你从塔内找到了一些用[green]奇异文字[/green]撰写的[purple]文献[/purple]。\n[jitter][red]你感觉脑子一片混乱[/red][/jitter]，踉跄着退了出来。\n\n回头望去，那里只留下了一片空地。",
+  "FBE-QUANTUM_TOWER.pages.BLINK_AGAIN_CHOSEN.description": "根本没有什么[purple]塔[/purple]。\n\n你只是太累了。",
+  "FBE-QUANTUM_TOWER.selectionScreenPrompt": "选择{Count}张牌[gold]附魔[/gold][purple]{Enchantment}[/purple]。"
 }
 
