@@ -20,8 +20,8 @@ public class UnlimitedBladeWorks() : FBECardModel(1, CardType.Power, CardRarity.
         new ForgeVar(8)
     ];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => HoverTipFactory.FromForge().Concat(HoverTipFactory
-        .FromCardWithCardHoverTips<SovereignBlade>().Concat([HoverTipFactory.Static(StaticHoverTip.ReplayStatic)]));
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => HoverTipFactory.FromForge()
+        .Concat(HoverTipFactory.FromCardWithCardHoverTips<SovereignBlade>());
 
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

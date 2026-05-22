@@ -5,3 +5,9 @@ FBE/images/*
 FBE/audio/*
 icon.svg
 icon.svg.import
+.idea/
+*.DotSettings.user
+export_credentials.cfg
+*.translation
+*.tmp
+*.import
