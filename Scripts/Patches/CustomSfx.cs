@@ -7,6 +7,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
@@ -42,15 +43,17 @@ public static class CustomSfxPatch2
     }
 }
 
-[HarmonyPatch(typeof(TheBombPower), nameof(TheBombPower.BeforeTurnEnd))]
+[HarmonyPatch(typeof(TheBombPower), nameof(TheBombPower.BeforeSideTurnEnd))]
 public static class TheBombPowerSfxPatch
 {
-    public static void Prefix(TheBombPower __instance, CombatSide side)
+    public static void Prefix(TheBombPower __instance, PlayerChoiceContext choiceContext,
+        CombatSide side,
+        IEnumerable<Creature> participants)
     {
         if (__instance.Applier?.Player == null || !__instance.Applier.Player.Relics.Any(r => r is TopHat))
             return;
 
-        if (side != __instance.Owner.Side || __instance.Amount > 1)
+        if (!participants.Contains(__instance.Owner) || __instance.Amount > 1)
             return;
 
         TaskHelper.RunSafely(PlayDelayed());

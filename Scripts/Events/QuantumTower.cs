@@ -106,7 +106,7 @@ public sealed class QuantumTower : FBEEventModel
         prompt.Add(DynamicVars["Count"]);
         prompt.Add(DynamicVars["Enchantment"]);
         var count = DynamicVars["Count"].IntValue;
-        var perfs = new CardSelectorPrefs(prompt, count, count);
+        var perfs = new CardSelectorPrefs(prompt, 0, count);
 
         var enchantment = ModelDb.Enchantment<Quantinized>();
 

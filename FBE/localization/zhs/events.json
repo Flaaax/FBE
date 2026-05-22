@@ -92,6 +92,6 @@
   "FBE-QUANTUM_TOWER.pages.BLINK.options.BLINK_AGAIN.description": "...",
   "FBE-QUANTUM_TOWER.pages.ENTER_TOWER_CHOSEN.description":"你从塔内找到了一些用[green]奇异文字[/green]撰写的[purple]文献[/purple]。\n[jitter][red]你感觉脑子一片混乱[/red][/jitter]，踉跄着退了出来。\n\n回头望去，那里只留下了一片空地。",
   "FBE-QUANTUM_TOWER.pages.BLINK_AGAIN_CHOSEN.description": "根本没有什么[purple]塔[/purple]。\n\n你只是太累了。",
-  "FBE-QUANTUM_TOWER.selectionScreenPrompt": "选择{Count}张牌[gold]附魔[/gold][purple]{Enchantment}[/purple]。"
+  "FBE-QUANTUM_TOWER.selectionScreenPrompt": "选择至多{Count}张牌[gold]附魔[/gold][purple]{Enchantment}[/purple]。"
 }
 

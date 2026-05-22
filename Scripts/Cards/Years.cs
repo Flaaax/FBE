@@ -1,10 +1,10 @@
-﻿
-using FBE.Scripts.Powers;
+﻿using FBE.Scripts.Powers;
 using FBE.Scripts.Utils;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Combat.History.Entries;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -24,15 +24,12 @@ public class Years() : FBECardModel(-1, CardType.Curse, CardRarity.Curse, Target
 
     protected override bool IsPlayable => _enabled;
 
-    private bool HasBeenPlayedLastOrThisTurn =>
-        CombatState != null &&
-        CombatManager.Instance.History.CardPlaysFinished.Any(e =>
-            e.CardPlay.Card is Years &&
-            e.CardPlay.Card.Owner == Owner &&
-            (e.RoundNumber == CombatState.RoundNumber || e.RoundNumber == CombatState.RoundNumber - 1));
+    private bool _hasBeenPlayedLastTurn;
+
+    private bool _hasBeenPlayedThisTurn;
 
     private bool _enabled;
-    
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await PowerCmd.Apply<ExtraTurnPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
@@ -42,15 +39,18 @@ public class Years() : FBECardModel(-1, CardType.Curse, CardRarity.Curse, Target
         AudioHelper.Play("res://FBE/audio/STS_SFX_TimeWarp_v2.ogg");
 
         await Cmd.Wait(0.25f);
+
+        _hasBeenPlayedThisTurn = true;
     }
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
+        _hasBeenPlayedThisTurn = false;
         if (player != Owner)
             return;
 
         var c = CardPile.GetCards(player, PileType.Hand).FirstOrDefault(c => c == this);
-        if (HasBeenPlayedLastOrThisTurn || c == null)
+        if (_hasBeenPlayedThisTurn || _hasBeenPlayedLastTurn || c == null)
         {
             _enabled = false;
             return;
@@ -61,6 +61,16 @@ public class Years() : FBECardModel(-1, CardType.Curse, CardRarity.Curse, Target
         await CardCmd.AutoPlay(choiceContext, this, null);
         //await CardPileHelper.AutoPlayFromHand(choiceContext, this);
         _enabled = false;
+    }
+
+    public override Task AfterSideTurnEnd(
+        PlayerChoiceContext choiceContext,
+        CombatSide side,
+        IEnumerable<Creature> participants)
+    {
+        if (!participants.Contains(Owner.Creature)) return Task.CompletedTask;
+        _hasBeenPlayedLastTurn = _hasBeenPlayedThisTurn;
+        return Task.CompletedTask;
     }
 
     public override bool ShouldPlay(CardModel card, AutoPlayType autoPlayType)
