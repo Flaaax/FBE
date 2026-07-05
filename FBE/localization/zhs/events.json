@@ -79,7 +79,7 @@
   "FBE-DEVIL_ROOM.pages.ENTER.options.LEAVE_ROOM.description": "离开并结束交易。",
   "FBE-DEVIL_ROOM.pages.LEAVE_ROOM_CHOSEN.description": "你买完东西后离开了。\n\n这[red]交易[/red]真划算。",
   "FBE-DEVIL_ROOM.pages.NO_PURCHASE.description": "你看了一圈，但是[sine]什么都没买[/sine]。\n\n恶魔的目光[jitter]如芒在背[/jitter]。于是你飞一般地向入口逃离了。",
-  "FBE-DEVIL_ROOOM.loss": "饿啊！{character}以为自己还能复活。",
+  "FBE-DEVIL_ROOM.loss": "饿啊！{character}以为自己还能复活。",
   
   "FBE-QUANTUM_TOWER.title": "无迹之塔",
   "FBE-QUANTUM_TOWER.pages.INITIAL.description": "四处都是荒芜的光景。\n\n眼前的空地上什么都没有。",

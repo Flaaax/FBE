@@ -38,9 +38,18 @@
   "FBE-CRUSADE.title": "东征",
   "FBE-CRUSADE.description": "所有玩家随机打出他们[gold]手牌[/gold]中的一张攻击牌。",
   "FBE-GENESIS2.title": "创世纪",
-  "FBE-GENESIS2.description":"在你的回合开始时，获得{StarsPerTurn:diff()}{singleStarIcon}。\n在你的回合结束时，失去所有{singleStarIcon}。",
+  "FBE-GENESIS2.description": "在你的回合开始时，获得{StarsPerTurn:diff()}{singleStarIcon}。\n在你的回合结束时，失去所有{singleStarIcon}。",
   "FBE-STATIC_DISCHARGE.title": "静电释放",
   "FBE-STATIC_DISCHARGE.description": "每当你被攻击时，[gold]生成[/gold]{StaticDischargePower:diff()}个[gold]闪电[/gold]充能球。",
   "FBE-SERUM.title": "血清",
-  "FBE-SERUM.description": "[gold]消耗[/gold][gold]手牌[/gold]中所有状态和诅咒牌，每张获得{Energy:energyIcons()}。"
+  "FBE-SERUM.description": "[gold]消耗[/gold][gold]手牌[/gold]中所有状态和诅咒牌，每张获得{Energy:energyIcons()}。",
+  //
+  "FBE-THE_D6_CHOICE_CARD.title": "选择（占位标题）",
+  "FBE-THE_D6_CHOICE_CARD.description": "将[gold]{proprety}[gold]=[blue]{value}[/blue]变为为1~6中的一个数。",
+  "FBE-THE_D6.title": "六面骰",
+  "FBE-THE_D6.description": "选择一张手牌，[gold]修改[/gold]它的{IfUpgraded:show:|{Selections}项}数值之一。",
+  "FBE-THE_D6.handSelectionPrompt": "选择一张手牌进行修改",
+  "FBE-THE_D6.propertySelectionPrompt": "选择一个值进行修改",
+  "FBE-THE_D6.modifier.energy": "耗能",
+  "FBE-THE_D6.modifier.general": "{name}"
 }

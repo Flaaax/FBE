@@ -11,7 +11,11 @@
 - 故障机器人：静电释放（`StaticDischarge`）
 - 亡灵缚者：血债（`BloodFeud`）、死体组织（`DeadTissue`）、留了一手（`KeepingAHand`）、时间雨（`TimeFall`）、遣返者（`Repatriate`）、虚幻引擎（`UnrealEngine`）
 - 摄政者：创世纪（`Genesis2`）、无限剑制（`UnlimitedBladeWorks`）
-- 无色：汇集（`Aggregate`）、东征（`Crusade`）、巨人杀手（`GiantKiller`）、招商引资（`InvestmentPromotion`）、操控现实（`MasterReality`）
+- 无色：汇集（`Aggregate`）、
+东征（`Crusade`）、
+巨人杀手（`GiantKiller`）、
+招商引资（`InvestmentPromotion`）、
+操控现实（`MasterReality`）、TheD6
 - 诅咒：岁月（`Years`）
 
 ### 遗物

@@ -314,6 +314,12 @@ public sealed class DevilRoom : FBEEventModel
             //await Cmd.Wait(0.25f);
             PlayLocalSfx("res://FBE/audio/devil room deal.wav");
             await costFunc();
+            if (Owner!.Creature.IsDead)
+            {
+                SetEventFinished(L10NLookup($"{Id.Entry}.loss"));
+                return;
+            }
+
             _purchaseCount++;
             if (_goodsBackup > 0)
             {

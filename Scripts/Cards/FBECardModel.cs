@@ -18,6 +18,6 @@ public abstract class FBECardModel : CardModel, ICustomModel
         ICustomModel.AddModel(GetType());
     }
 
-    public override string PortraitPath => $"res://FBE/images/cards/{GetType().Name}.png";
-    
+    protected virtual Type PortraitOverride => GetType();
+    public override string PortraitPath => $"res://FBE/images/cards/{PortraitOverride.Name}.png";
 }
