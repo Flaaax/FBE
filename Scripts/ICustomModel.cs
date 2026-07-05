@@ -29,4 +29,10 @@ public interface ICustomModel
             return;
         Events.Add(customEvent);
     }
+
+    public void Log(string msg)
+    {
+        var id = ((AbstractModel)this).Id.Entry;
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[{id}] {msg}");
+    }
 }

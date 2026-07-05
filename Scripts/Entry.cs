@@ -69,32 +69,32 @@ public class Entry
 	}
 }
 
-[HarmonyPatch(typeof(NPlayerHand), "SelectCardInSimpleMode")]
-[HarmonyPatch([typeof(NHandCardHolder)])]
-static class PatchSelectCardInSimpleMode //单选时跳过确认
-{
-	static void Postfix(NPlayerHand __instance)
-	{
-		var prefs = Traverse.Create(__instance).Field("_prefs").GetValue<CardSelectorPrefs>();
-
-		if (prefs.MinSelect == 1 && prefs.MaxSelect == 1)
-		{
-			Traverse.Create(__instance).Method("CheckIfSelectionComplete").GetValue();
-		}
-	}
-}
-
-[HarmonyPatch(typeof(NPlayerHand), "SelectCardInUpgradeMode")]
-[HarmonyPatch([typeof(NHandCardHolder)])]
-static class PatchSelectCardInUpgradeMode //同上
-{
-	static void Postfix(NPlayerHand __instance)
-	{
-		var prefs = Traverse.Create(__instance).Field("_prefs").GetValue<CardSelectorPrefs>();
-
-		if (prefs.MinSelect == 1 && prefs.MaxSelect == 1)
-		{
-			Traverse.Create(__instance).Method("CheckIfSelectionComplete").GetValue();
-		}
-	}
-}
+// [HarmonyPatch(typeof(NPlayerHand), "SelectCardInSimpleMode")]
+// [HarmonyPatch([typeof(NHandCardHolder)])]
+// static class PatchSelectCardInSimpleMode //单选时跳过确认
+// {
+// 	static void Postfix(NPlayerHand __instance)
+// 	{
+// 		var prefs = Traverse.Create(__instance).Field("_prefs").GetValue<CardSelectorPrefs>();
+//
+// 		if (prefs.MinSelect == 1 && prefs.MaxSelect == 1)
+// 		{
+// 			Traverse.Create(__instance).Method("CheckIfSelectionComplete").GetValue();
+// 		}
+// 	}
+// }
+//
+// [HarmonyPatch(typeof(NPlayerHand), "SelectCardInUpgradeMode")]
+// [HarmonyPatch([typeof(NHandCardHolder)])]
+// static class PatchSelectCardInUpgradeMode //同上
+// {
+// 	static void Postfix(NPlayerHand __instance)
+// 	{
+// 		var prefs = Traverse.Create(__instance).Field("_prefs").GetValue<CardSelectorPrefs>();
+//
+// 		if (prefs.MinSelect == 1 && prefs.MaxSelect == 1)
+// 		{
+// 			Traverse.Create(__instance).Method("CheckIfSelectionComplete").GetValue();
+// 		}
+// 	}
+// }

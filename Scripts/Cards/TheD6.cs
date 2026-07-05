@@ -5,128 +5,174 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Models.Cards;
 
 namespace FBE.Scripts.Cards;
 
 [Pool(typeof(TokenCardPool))]
-public class TheD6ChoiceCard() : FBECardModel(-1, CardType.None, CardRarity.Token, TargetType.None)
+public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Token, TargetType.None)
 {
-    private string? _runtimeTitle;
-    private string? _runtimeProperty;
-    public override int MaxUpgradeLevel => 0;
-    public override bool CanBeGeneratedInCombat => false;
-    protected override Type PortraitOverride => typeof(TheD6);
+	private string? _runtimeTitle;
+	private string? _runtimeProperty;
+	public override int MaxUpgradeLevel => 0;
+	public override bool CanBeGeneratedInCombat => false;
+	protected override Type PortraitOverride => typeof(TheD6);
 
-    public int Index { get; private set; }
-    private int _value;
+	public int Index { get; private set; }
+	private int _value;
 
-    public void Init(string property, int value, int index)
-    {
-        AssertMutable();
-        _runtimeTitle = property;
-        _runtimeProperty = property;
-        Index = index;
-        _value = value;
-    }
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new StringVar("property", "unknown property"),
+		new IntVar("value", 0),
+		new IntVar("MinRange", 0),
+		new IntVar("MaxRange", 0)
+	];
 
-    public override string Title => _runtimeTitle ?? base.Title;
+	public void Init(string property, int value, int index, int minRange, int maxRange)
+	{
+		AssertMutable();
+		_runtimeTitle = property;
+		_runtimeProperty = property;
+		Index = index;
+		_value = value;
 
-    protected override void AddExtraArgsToDescription(LocString description)
-    {
-        if (_runtimeProperty != null)
-        {
-            description.Add("property", _runtimeProperty);
-            description.Add("value", _value);
-        }
-    }
+		((StringVar)DynamicVars["property"]).StringValue = property;
+		DynamicVars["value"].BaseValue = value;
+		DynamicVars["MinRange"].BaseValue = minRange;
+		DynamicVars["MaxRange"].BaseValue = maxRange;
+	}
+
+	public override string Title => _runtimeTitle ?? base.Title;
+
+	// protected override void AddExtraArgsToDescription(LocString description)
+	// {
+	// 	if (_runtimeProperty == null)
+	// 	{
+	// 		Log.Warn("This is unexpected...");
+	// 		return;
+	// 	}
+	//
+	// 	description.Add("property", _runtimeProperty);
+	// 	description.Add("value", _value);
+	// }
+}
+
+public class TheD6Base
+{
+	private LocString? _propertySelectionPrompt;
+	private LocString? _handSelectionPrompt;
+	private static readonly string Id = ModelDb.Card<TheD6ChoiceCard>().Id.Entry;
+
+	private LocString HandSelectionPrompt =>
+		_handSelectionPrompt ??= new LocString("cards", Id + ".handSelectionPrompt");
+
+	private LocString PropertySelectionPrompt =>
+		_propertySelectionPrompt ??=
+			new LocString("cards", Id + ".propertySelectionPrompt");
+
+	private static List<(LocString, int, Action<int>)> GetModifiers(CardModel card)
+	{
+		List<(LocString, int, Action<int>)> ret = [];
+		if (!card.EnergyCost.CostsX)
+		{
+			ret.Add((new LocString("cards", Id + ".modifier.energy"),
+				card.EnergyCost.GetResolved(), // Could this work well?
+				i => card.EnergyCost.SetThisCombat(i)));
+		}
+
+		foreach (var dynVar in card.DynamicVars.Values.Where(dynVar => dynVar is not StringVar))
+		{
+			// "{name}"
+			var str = new LocString("cards", Id + ".modifier.general");
+			str.Add("name", dynVar.Name);
+			ret.Add((str, dynVar.IntValue, i => dynVar.BaseValue = i));
+		}
+
+		return ret;
+	}
+
+	public async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay, CardModel self)
+	{
+		var card = (await CardSelectCmd.FromHand(
+			prefs: new CardSelectorPrefs(HandSelectionPrompt, 1),
+			context: choiceContext, player: self.Owner,
+			filter: null,
+			source: self)).FirstOrDefault();
+
+		if (card == null)
+		{
+			return;
+		}
+
+		var modifiers = GetModifiers(card);
+
+		self.Owner.RunState.Rng.CombatCardSelection.Shuffle(modifiers);
+
+		var selectionCount = self.IsUpgraded ? 999 : self.DynamicVars["Selections"].IntValue;
+		modifiers = modifiers.Take(selectionCount).ToList();
+		selectionCount = modifiers.Count;
+
+		var minRange = self.DynamicVars["MinRange"].IntValue;
+		var maxRange = self.DynamicVars["MaxRange"].IntValue;
+
+		List<CardModel> selections = [];
+		for (var i = 0; i < modifiers.Count; i++)
+		{
+			var (name, value, _) = modifiers[i];
+			var card1 = self.CombatState!.CreateCard<TheD6ChoiceCard>(self.Owner);
+			card1.Init(name.GetFormattedText(), value, i, minRange, maxRange);
+			selections.Add(card1);
+		}
+
+		TheD6ChoiceCard? selected;
+		if (selectionCount <= 3)
+		{
+			selected = (TheD6ChoiceCard?)await CardSelectCmd.FromChooseACardScreen(choiceContext, selections,
+				self.Owner);
+		}
+		else
+		{
+			selected = (TheD6ChoiceCard?)(await CardSelectCmd.FromSimpleGrid(choiceContext,
+				selections,
+				self.Owner, new CardSelectorPrefs(PropertySelectionPrompt, 1))).FirstOrDefault();
+		}
+
+		if (selected == null)
+		{
+			return;
+		}
+
+		var action = modifiers[selected.Index].Item3;
+		var rollValue = self.Owner.RunState.Rng.CombatCardSelection.NextInt(minRange, maxRange + 1);
+		action(rollValue);
+	}
 }
 
 [Pool(typeof(ColorlessCardPool))]
-public class TheD6() : FBECardModel(1, CardType.Skill, CardRarity.Rare, TargetType.None)
+public class TheD6() : FBECardModel(1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 {
-    private LocString? _propertySelectionPrompt;
-    private LocString? _handSelectionPrompt;
+	private readonly TheD6Base _myBase = new();
 
-    private LocString HandSelectionPrompt =>
-        _handSelectionPrompt ??= new LocString("cards", Id.Entry + ".handSelectionPrompt");
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new IntVar("Selections", 2),
+		new IntVar("MinRange", 1),
+		new IntVar("MaxRange", 6)
+	];
 
-    private LocString PropertySelectionPrompt =>
-        _propertySelectionPrompt ??= new LocString("cards", Id.Entry + ".propertySelectionPrompt");
+	// name, value, modifier
 
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new IntVar("Selections", 1)
-    ];
 
-    // name, value, modifier
-    private List<(LocString, int, Action<int>)> GetModifiers(CardModel card)
-    {
-        List<(LocString, int, Action<int>)> ret = [];
-        if (!card.EnergyCost.CostsX)
-        {
-            ret.Add((new LocString("cards", Id.Entry + ".modifier.energy"),
-                card.EnergyCost.GetResolved(), // Could this work well?
-                i => card.EnergyCost.SetThisCombat(i)));
-        }
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		await _myBase.OnPlay(choiceContext, cardPlay, this);
+	}
 
-        foreach (var dynVar in card.DynamicVars.Values.Where(dynVar => dynVar is not StringVar))
-        {
-            // "{name}"
-            var str = new LocString("cards", Id.Entry + ".modifier.general");
-            str.Add("name", dynVar.Name);
-            ret.Add((str, dynVar.IntValue, i => dynVar.BaseValue = i));
-        }
-
-        return ret;
-    }
-
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        var card = (await CardSelectCmd.FromHand(
-            prefs: new CardSelectorPrefs(HandSelectionPrompt, 1),
-            context: choiceContext, player: Owner,
-            filter: null,
-            source: this)).FirstOrDefault();
-
-        if (card == null)
-        {
-            return;
-        }
-
-        var modifiers = GetModifiers(card);
-
-        // 只能选三个项，但这可能会改...
-        Owner.RunState.Rng.CombatCardSelection.Shuffle(modifiers);
-
-        var selectionCount = IsUpgraded ? 999 : DynamicVars["Selections"].IntValue;
-        modifiers = modifiers.Take(selectionCount).ToList();
-
-        List<CardModel> selections = [];
-        for (var i = 0; i < modifiers.Count; i++)
-        {
-            var (name, value, _) = modifiers[i];
-            var card1 = CombatState!.CreateCard<TheD6ChoiceCard>(Owner);
-            card1.Init(name.GetFormattedText(), value, i);
-            selections.Add(card1);
-        }
-
-        var selected = (TheD6ChoiceCard?)(await CardSelectCmd.FromSimpleGrid(choiceContext, selections,
-            Owner, new CardSelectorPrefs(PropertySelectionPrompt, 1))).FirstOrDefault();
-        if (selected == null)
-        {
-            return;
-        }
-
-        var action = modifiers[selected.Index].Item3;
-        var rollValue = Owner.RunState.Rng.CombatCardSelection.NextInt(1, 6 + 1); // Maybe this range could change too?
-        action(rollValue);
-    }
-
-    protected override void OnUpgrade()
-    {
-        //DynamicVars["StaticDischargePower"].UpgradeValueBy(1m);
-    }
+	protected override void OnUpgrade()
+	{
+		//DynamicVars["StaticDischargePower"].UpgradeValueBy(1m);
+	}
 }
