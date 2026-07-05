@@ -55,6 +55,12 @@
 - 新增事件音乐、事件音效、死亡音效、爆炸音效等音频资源。
 - 新增简体中文本地化：卡牌、遗物、事件、能力、附魔。
 
+### 配置文件
+
+- FBE 的配置文件位于 Godot 用户目录：`user://FBE/config.json`。
+- 在当前 Windows 开发环境中，通常对应 `C:\Users\TempAccount\AppData\Roaming\SlayTheSpire2\FBE\config.json`。
+- 配置界面由 RitsuLib 可选提供；未安装 RitsuLib 时仍会使用同一个配置文件路径。
+
 ## 对原版的改动
 
 ### 卡池与事件池

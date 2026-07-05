@@ -27,8 +27,9 @@ public class DeadTissue() : FBECardModel(1, CardType.Attack, CardRarity.Common, 
         new OstyDamageVar(5m, ValueProp.Move),
         new SummonVar(5m)
     ];
-    
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.Static(StaticHoverTip.SummonDynamic, base.DynamicVars.Summon)];
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        [HoverTipFactory.Static(StaticHoverTip.SummonDynamic, base.DynamicVars.Summon)];
 
     protected override HashSet<CardTag> CanonicalTags => [CardTag.OstyAttack];
 
@@ -38,12 +39,13 @@ public class DeadTissue() : FBECardModel(1, CardType.Attack, CardRarity.Common, 
         ArgumentNullException.ThrowIfNull(cardPlay.Target);
         if (!Osty.CheckMissingWithAnim(Owner))
         {
-            await DamageCmd.Attack(DynamicVars.OstyDamage.BaseValue).FromOsty(Owner.Osty!, this).Targeting(cardPlay.Target)
+            await DamageCmd.Attack(DynamicVars.OstyDamage.BaseValue).FromOsty(Owner.Osty!, this, cardPlay)
+                .Targeting(cardPlay.Target)
                 .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                 .Execute(choiceContext);
         }
-        await OstyCmd.Summon(choiceContext, Owner, DynamicVars.Summon.BaseValue, this);
 
+        await OstyCmd.Summon(choiceContext, Owner, DynamicVars.Summon.BaseValue, this);
     }
 
     protected override void OnUpgrade()

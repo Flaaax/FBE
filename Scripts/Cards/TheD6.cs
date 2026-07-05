@@ -11,27 +11,26 @@ using MegaCrit.Sts2.Core.Models.Orbs;
 namespace FBE.Scripts.Cards;
 
 [Pool(typeof(DefectCardPool))]
-public class TheD6() : FBECardModel(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
+public class TheD6() : FBECardModel(1, CardType.Skill, CardRarity.Rare, TargetType.None)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new PowerVar<StaticDischargePower>(1m),
-    ];
+    // protected override IEnumerable<DynamicVar> CanonicalVars =>
+    // [
+    //     new PowerVar<StaticDischargePower>(1m),
+    // ];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        HoverTipFactory.Static(StaticHoverTip.Channeling),
-        HoverTipFactory.FromOrb<LightningOrb>()
-    ];
+    // protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    // [
+    //     HoverTipFactory.Static(StaticHoverTip.Channeling),
+    //     HoverTipFactory.FromOrb<LightningOrb>()
+    // ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-        await PowerCmd.Apply<StaticDischargePower>(choiceContext, Owner.Creature, DynamicVars["StaticDischargePower"].BaseValue, Owner.Creature, this);
+        
     }
 
     protected override void OnUpgrade()
     {
-        DynamicVars["StaticDischargePower"].UpgradeValueBy(1m);
+        //DynamicVars["StaticDischargePower"].UpgradeValueBy(1m);
     }
 }

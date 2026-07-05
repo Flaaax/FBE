@@ -40,7 +40,7 @@ public class GiantKiller() : FBECardModel(2, CardType.Attack, CardRarity.Uncommo
         var sfx = cardPlay.Target.CurrentHp > ModifiedHealth
             ? "res://FBE/audio/hit_crit.ogg"
             : null;
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this).Targeting(cardPlay.Target)
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this, cardPlay).Targeting(cardPlay.Target)
             .WithHitFx("vfx/vfx_attack_blunt", sfx, "blunt_attack.mp3")
             .Execute(choiceContext);
     }

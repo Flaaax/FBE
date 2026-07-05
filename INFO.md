@@ -5,3 +5,7 @@
 
 官方 Uploader
 https://github.com/megacrit/sts2-mod-uploader
+
+## 无 mod 运行
+
+启动参数加入`nomods`

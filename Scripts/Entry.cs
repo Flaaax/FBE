@@ -1,4 +1,5 @@
 using System.Reflection;
+using FBE.Scripts.Config;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Logging;
@@ -13,6 +14,8 @@ namespace FBE.Scripts;
 [ModInitializer("Init")]
 public class Entry
 {
+	public const string ModId = "FBE";
+
 	public static Logger Log { get; } = new("FBE", LogType.Generic);
 	public static bool EnableSyncDebugTracePatches { get; private set; }
 
@@ -28,6 +31,9 @@ public class Entry
 		// 传入参数随意，只要不和其他人撞车即可
 		_harmony = new Harmony("STS2.FBE");
 		_harmony.PatchAll();
+
+		FBEConfig.Load();
+		OptionalRitsuLibIntegration.Initialize();
 
 		RegisterSavedPropertyModels();
 		// 使得tscn可以加载自定义脚本

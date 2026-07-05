@@ -23,7 +23,7 @@ using FileAccess = Godot.FileAccess;
 public class BloodFeud() : FBECardModel(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override bool ShouldGlowRedInternal => Owner.IsOstyMissing;
-    
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new OstyDamageVar(6m, ValueProp.Move),
@@ -42,7 +42,7 @@ public class BloodFeud() : FBECardModel(1, CardType.Attack, CardRarity.Common, T
         {
             var hitCount = !cardPlay.Target.HasPower<DoomPower>() ? 1 : (DynamicVars.Repeat.IntValue + 1);
 
-            await DamageCmd.Attack(DynamicVars.OstyDamage.BaseValue).FromOsty(Owner.Osty!, this)
+            await DamageCmd.Attack(DynamicVars.OstyDamage.BaseValue).FromOsty(Owner.Osty!, this, cardPlay)
                 .WithHitCount(hitCount)
                 .Targeting(cardPlay.Target)
                 .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")

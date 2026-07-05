@@ -19,7 +19,7 @@ public class TimeFallPower : FBEPowerModel
 
     public override string CustomIconPath => "res://FBE/images/powers/TimeFallPower.png";
 
-    public override decimal ModifyPowerAmountGiven(PowerModel power, Creature giver, decimal amount, Creature? target,
+    public override decimal ModifyPowerAmountGivenAdditive(PowerModel power, Creature giver, decimal amount, Creature? target,
         CardModel? cardSource)
     {
         if (power is not DoomPower || giver != Owner || target is not { IsEnemy: true })
