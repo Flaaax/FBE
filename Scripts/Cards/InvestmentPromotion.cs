@@ -36,11 +36,10 @@ public class InvestmentPromotion() : FBECardModel(0, CardType.Skill, CardRarity.
 
     private CardModel? GetCard()
     {
-        var entry = CombatManager.Instance.History.CardPlaysFinished.LastOrDefault(e =>
-            e.HappenedThisTurn(CombatState) && e.CardPlay.Card.Owner != Owner);
+        var entry = CombatManager.Instance.History.CardPlaysFinished.LastOrDefault(e => e.CardPlay.Card.Owner != Owner);
         return entry?.CardPlay.Card;
     }
-    
+
     protected override void AddExtraArgsToDescription(LocString description)
     {
         var card = GetCard();

@@ -36,7 +36,7 @@ public class Quantinized : FBEEnchantmentModel
     {
         var otherPools = ModelDb.AllCharacterCardPools.Except([_pool!]);
         var rng = Card.Owner.RunState.Rng.CombatCardSelection;
-        var targetPool = rng.NextFloat() <= 0.75 ? _pool : rng.NextItem(otherPools);
+        var targetPool = rng.NextFloat() <= 0.8 ? _pool : rng.NextItem(otherPools);
 
         var options = targetPool?.GetUnlockedCards(Card.Owner.UnlockState, Card.RunState!.CardMultiplayerConstraint)
             .Where(c => c.Id != Card.Id && c.IsRemovable && c.IsTransformable && c.Rarity != CardRarity.Basic) ?? [];
