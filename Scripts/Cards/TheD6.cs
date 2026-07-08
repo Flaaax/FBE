@@ -136,8 +136,9 @@ public class TheD6Base
 		else
 		{
 			selected = (TheD6ChoiceCard?)(await CardSelectCmd.FromSimpleGrid(choiceContext,
-				selections,
-				self.Owner, new CardSelectorPrefs(PropertySelectionPrompt, 1))).FirstOrDefault();
+					selections,
+					self.Owner, new CardSelectorPrefs(PropertySelectionPrompt, 1) { RequireManualConfirmation = true }))
+				.FirstOrDefault();
 		}
 
 		if (selected == null)

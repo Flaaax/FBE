@@ -3,24 +3,15 @@ using FBE.Scripts.Cards;
 using FBE.Scripts.Relics;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Gold;
 using MegaCrit.Sts2.Core.Events;
-using MegaCrit.Sts2.Core.Factories;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.ValueProps;
 
 namespace FBE.Scripts.Events;
 
-public sealed class Reflection : FBEEventModel
+public sealed class EchoesOfTime : FBEEventModel
 {
     // 背景图位置
     public override string CustomInitialPortraitPath => "res://FBE/images/events/Reflection.png";

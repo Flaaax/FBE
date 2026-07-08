@@ -1,0 +1,18 @@
+{
+  "FBE-REMOVED_ROAD_SIGN.description": "At the start of the next [blue]{Combats}[/blue] combats, gain [blue]1[/blue] [gold]Vulnerable[/gold].\n(Equivalent to 2 turns of [gold]Vulnerable[/gold].)",
+  "FBE-REMOVED_ROAD_SIGN.flavor": "[red]You have no Kimi spirit...[/red]",
+  "FBE-REMOVED_ROAD_SIGN.title": "Uprooted Road Sign",
+  "FBE-SWORD_OF_STONE_MK2.title": "Sword of Stone Mk II",
+  "FBE-SWORD_OF_STONE_MK2.description": "After losing [red]{HealthToLose}[/red] HP, Transform this into a powerful [gold]Relic[/gold].",
+  "FBE-SWORD_OF_STONE_MK2.flavor": "[red]This is the Sword of Stone Mk II...[/red]",
+  "FBE-INSIGHT.title": "Insight",
+  "FBE-INSIGHT.description": "Upon pickup, view [blue]{RewardCount}[/blue] cards from a [gold]random character[/gold]. Add any number of them to your [gold]Deck[/gold].",
+  "FBE-INSIGHT.flavor": "[red]This power does not belong to you...[/red]",
+  "FBE-INSIGHT.selectionScreenPrompt": "Choose any number of cards to add to your Deck",
+  "FBE-REDEMPTION.title": "Redemption",
+  "FBE-REDEMPTION.description": "After defeating a Boss enemy, heal [blue]{Heal}[/blue] HP.",
+  "FBE-REDEMPTION.flavor": "[blue][i]Deliver us from evil[/i][/blue]",
+  "FBE-TOP_HAT.title": "Top Hat",
+  "FBE-TOP_HAT.description": "Card rewards contain an additional [gold]Bomb[/gold]. [gold]Bomb[/gold] costs [blue]0[/blue].",
+  "FBE-TOP_HAT.flavor": "[blue]Epic Fetus[/blue]"
+}
