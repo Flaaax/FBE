@@ -8,7 +8,7 @@ public static class PatchGetEntry
 {
     public static void Postfix(ref string __result, Type type)
     {
-        if (type.IsAssignableTo(typeof(ICustomModel)))
+        if (type.IsAssignableTo(typeof(IFBEModel)))
         {
             __result = "FBE-" + __result;
         }

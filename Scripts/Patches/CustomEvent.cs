@@ -16,7 +16,7 @@ public static class CustomSharedEventsPatch
 
     public static void Postfix(ref IEnumerable<EventModel> __result)
     {
-        __result = __result.Concat(ICustomModel.Events);
+        __result = __result.Concat(IFBEModel.Events);
     }
 }
 

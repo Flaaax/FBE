@@ -1,15 +1,18 @@
 using System.Reflection;
+using FBE.Scripts.Ancients;
+using FBE.Scripts.Events;
 using FBE.Scripts.Utils;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 
 namespace FBE.Scripts;
 
-public interface ICustomModel
+public interface IFBEModel
 {
 	private static readonly HashSet<Type> RegisteredTypes = [];
 	private static bool RegisterType(Type t) => RegisteredTypes.Add(t);
-	public static readonly List<EventModel> Events = [];
+	public static readonly List<FBEEventModel> Events = [];
+	//public static readonly List<FBEAncientModel> Ancients = [];
 
 	public static void AddModel(Type modelType)
 	{
@@ -29,12 +32,22 @@ public interface ICustomModel
 		ModHelper.AddModelToPool(poolAttribute.PoolType, modelType);
 	}
 
-	public static void AddEvent(EventModel customEvent)
+	public static void AddEvent(FBEEventModel customEvent)
 	{
 		if (!RegisterType(customEvent.GetType()))
 			return;
 		Events.Add(customEvent);
 	}
+
+	// public static void AddAncient(FBEAncientModel ancient)
+	// {
+	// 	if (!RegisterType(ancient.GetType()))
+	// 	{
+	// 		return;
+	// 	}
+	// 	
+	// 	Ancients.Add(ancient);
+	// }
 
 	public void Log(string msg)
 	{

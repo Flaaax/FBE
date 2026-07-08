@@ -11,6 +11,9 @@
         <Sts2Dir>D:\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
         <GodotExe>C:\dev\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
         <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
+
+        <RitsuLibDeployDir>$(Sts2Dir)/mods/STS2-RitsuLib/</RitsuLibDeployDir>
+
     </PropertyGroup>
 
     <PropertyGroup>
@@ -43,6 +46,8 @@
             <Private>false</Private>
         </Reference>
 
+        <PackageReference Include="STS2.RitsuLib" Version="*" />
+
         <!--        <Reference Include="BaseLib">-->
         <!--            <HintPath>E:\STS\STS2\BaseLib Bin\BaseLib.dll</HintPath>-->
         <!--            <Private>false</Private>-->
@@ -51,6 +56,7 @@
 
     <ItemGroup>
         <Content Include="FBE\images\cards\BloodFeud.png"/>
+        <Content Include="FBE\scenes\TaintedCain.tscn" />
     </ItemGroup>
 
     <!-- 自动复制dll和json -->

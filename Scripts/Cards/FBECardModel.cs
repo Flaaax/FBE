@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models;
 namespace FBE.Scripts.Cards;
 
 // ReSharper disable once InconsistentNaming
-public abstract class FBECardModel : CardModel, ICustomModel
+public abstract class FBECardModel : CardModel, IFBEModel
 {
     protected FBECardModel(int energyCost,
         CardType type,
@@ -15,7 +15,7 @@ public abstract class FBECardModel : CardModel, ICustomModel
         TargetType targetType,
         bool shouldShowInCardLibrary = true) : base(energyCost, type, rarity, targetType, shouldShowInCardLibrary)
     {
-        ICustomModel.AddModel(GetType());
+        IFBEModel.AddModel(GetType());
     }
 
     protected virtual Type PortraitOverride => GetType();

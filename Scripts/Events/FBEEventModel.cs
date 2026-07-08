@@ -14,11 +14,11 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 
 namespace FBE.Scripts.Events;
 
-public abstract class FBEEventModel : EventModel, ICustomModel
+public abstract class FBEEventModel : EventModel, IFBEModel
 {
     protected FBEEventModel()
     {
-        ICustomModel.AddEvent(this);
+        IFBEModel.AddEvent(this);
     }
     
     protected bool IsLocalOwner()

@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using STS2RitsuLib;
+using STS2RitsuLib.Interop;
 
 namespace FBE.Scripts;
 
@@ -16,14 +18,19 @@ public class Entry
 {
 	public const string ModId = "FBE";
 
-	public static Logger Log { get; } = new("FBE", LogType.Generic);
+	public static Logger Log { get; } = RitsuLibFramework.CreateLogger(ModId);
 	public static bool EnableSyncDebugTracePatches { get; private set; }
 
 	private static Harmony? _harmony;
-
+	
 	// 初始化函数
 	public static void Init()
 	{
+		// harmony可用，但是最好用ritsu的封装patch，见补丁系统一章
+		// var harmony = new Harmony("com.example.testmod");
+		// harmony.PatchAll();
+		
+		
 		//允许Debug日志（会造成日志膨胀）
 		EnableSyncDebugTracePatches = false;
 
@@ -35,6 +42,12 @@ public class Entry
 		FBEConfig.Load();
 		OptionalRitsuLibIntegration.Initialize();
 
+		// RitsuLib 注册器
+		var assembly = Assembly.GetExecutingAssembly();
+		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Log);
+		// 自动注册内容
+		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+		
 		RegisterSavedPropertyModels();
 		// 使得tscn可以加载自定义脚本
 		//ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);
@@ -53,7 +66,7 @@ public class Entry
 			if (!type.IsClass || type.IsAbstract)
 				continue;
 
-			if (!typeof(ICustomModel).IsAssignableFrom(type))
+			if (!typeof(IFBEModel).IsAssignableFrom(type))
 				continue;
 
 			var hasSavedProperty = type

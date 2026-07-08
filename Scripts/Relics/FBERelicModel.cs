@@ -2,7 +2,7 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace FBE.Scripts.Relics;
 
-public abstract class FBERelicModel : RelicModel, ICustomModel
+public abstract class FBERelicModel : RelicModel, IFBEModel
 {
     public virtual string? CustomIconPath => $"res://FBE/images/relics/{GetType().Name}.png";
     
@@ -16,6 +16,6 @@ public abstract class FBERelicModel : RelicModel, ICustomModel
     
     protected FBERelicModel()
     {
-        ICustomModel.AddModel(GetType());
+        IFBEModel.AddModel(GetType());
     }
 }

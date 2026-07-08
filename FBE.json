@@ -1,11 +1,15 @@
 {
-  "id": "FBE",
-  "name": "FBE",
-  "author": "Flaaax",
-  "description": "Flaaax's Content Mod for SLS2",
-  "version": "1.0.6",
-  "has_pck": true,
-  "has_dll": true,
-  "dependencies": [],
-  "affects_gameplay": true
+	"id": "FBE",
+	"name": "FBE",
+	"author": "Flaaax",
+	"description": "Flaaax's Content Mod for SLS2",
+	"version": "1.0.7",
+	"has_pck": true,
+	"has_dll": true,
+	"dependencies": [
+		{
+			"id": "STS2-RitsuLib"
+		}
+	],
+	"affects_gameplay": true
 }
