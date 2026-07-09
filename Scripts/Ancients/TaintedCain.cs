@@ -30,9 +30,9 @@ public class TaintedCain : ModAncientEventTemplate
 	// 自定义地图图标和轮廓的路径
 	public override AncientEventPresentationAssetProfile AncientPresentationAssetProfile => new(
 		MapIconPath: MapPortrait,
-		// MapIconOutlinePath: MapPortrait,
-		RunHistoryIconPath: MapPortrait
-		// RunHistoryIconOutlinePath: MapPortrait
+		MapIconOutlinePath: MapPortrait,
+		RunHistoryIconPath: MapPortrait,
+		RunHistoryIconOutlinePath: MapPortrait
 	);
 
 	// 固定池一和二

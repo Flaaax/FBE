@@ -14,8 +14,11 @@
 	"FBE-REDEMPTION.flavor": "[blue][i]救我们脱离凶恶[/i][/blue]",
 	"FBE-TOP_HAT.title": "高礼帽",
 	"FBE-TOP_HAT.description": "你的卡牌奖励会额外包含一张[gold]炸弹[/gold]。[gold]炸弹[/gold]的费用变为[blue]0[/blue]。",
-	"FBE-TOP_HAT.flavor": "[blue]史诗胎儿[/blue]",
+	"FBE-TOP_HAT.flavor": "[blue]史诗胎儿戴的帽子[/blue]",
 	"FBE-DIPLOPIA.title": "复眼",
 	"FBE-DIPLOPIA.description": "拾起时，复制你的整个[gold]牌组[/gold]。",
-	"FBE-DIPLOPIA.flavor": "[blue]视功能障碍[/blue]"
+	"FBE-DIPLOPIA.flavor": "[blue]你获得了视功能障碍[/blue]",
+	"FBE-PHD.title": "药学博士证",
+	"FBE-PHD.description": "当你使用药水时，获得{Energy:energyIcons()}。",
+	"FBE-PHD.flavor": "[blue]更好的药水[/blue]"
 }

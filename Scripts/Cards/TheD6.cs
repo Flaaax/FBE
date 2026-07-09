@@ -25,7 +25,7 @@ public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Tok
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new StringVar("property", "unknown property"),
+		new StringVar("property", "unknown_property"),
 		new IntVar("value", 0),
 		new IntVar("MinRange", 0),
 		new IntVar("MaxRange", 0)
@@ -111,9 +111,10 @@ public class TheD6Base
 
 		self.Owner.RunState.Rng.CombatCardSelection.Shuffle(modifiers);
 
-		var selectionCount = self.IsUpgraded ? 999 : self.DynamicVars["Selections"].IntValue;
-		modifiers = modifiers.Take(selectionCount).ToList();
-		selectionCount = modifiers.Count;
+		// var selectionCount = self.IsUpgraded ? 999 : self.DynamicVars["Selections"].IntValue;
+		// modifiers = modifiers.Take(selectionCount).ToList();
+		// selectionCount = modifiers.Count;
+		const int selectionCount = 999;
 
 		var minRange = self.DynamicVars["MinRange"].IntValue;
 		var maxRange = self.DynamicVars["MaxRange"].IntValue;
@@ -159,7 +160,7 @@ public class TheD6() : FBECardModel(1, CardType.Skill, CardRarity.Uncommon, Targ
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new IntVar("Selections", 2),
+		// new IntVar("Selections", 2),
 		new IntVar("MinRange", 1),
 		new IntVar("MaxRange", 6)
 	];
@@ -174,6 +175,7 @@ public class TheD6() : FBECardModel(1, CardType.Skill, CardRarity.Uncommon, Targ
 
 	protected override void OnUpgrade()
 	{
+		EnergyCost.UpgradeBy(-1);
 		//DynamicVars["StaticDischargePower"].UpgradeValueBy(1m);
 	}
 }
