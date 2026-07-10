@@ -12,7 +12,8 @@
         <GodotExe>C:\dev\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
         <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
 
-        <RitsuLibDeployDir>$(Sts2Dir)/mods/STS2-RitsuLib/</RitsuLibDeployDir>
+        
+<!--        <RitsuLibDeployDir>$(Sts2Dir)/mods/STS2-RitsuLib/</RitsuLibDeployDir>-->
 
     </PropertyGroup>
 
@@ -54,10 +55,10 @@
         <!--        </Reference>-->
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="FBE\images\cards\BloodFeud.png"/>
-        <Content Include="FBE\scenes\TaintedCain.tscn" />
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--        <Content Include="FBE\images\cards\BloodFeud.png"/>-->
+<!--        <Content Include="FBE\scenes\TaintedCain.tscn" />-->
+<!--    </ItemGroup>-->
 
     <!-- 自动复制dll和json -->
     <Target Name="Copy Mod" AfterTargets="PostBuildEvent">

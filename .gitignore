@@ -1,8 +1,11 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
-FBE/images/*
-FBE/audio/*
+*.png
+*.jpg
+*.wav
+*.ogg
+*.mp3
 icon.svg
 icon.svg.import
 .idea/
@@ -10,4 +13,3 @@ icon.svg.import
 export_credentials.cfg
 *.translation
 *.tmp
-*.import

@@ -113,8 +113,7 @@ public class TheD6Base
 
 		// var selectionCount = self.IsUpgraded ? 999 : self.DynamicVars["Selections"].IntValue;
 		// modifiers = modifiers.Take(selectionCount).ToList();
-		// selectionCount = modifiers.Count;
-		const int selectionCount = 999;
+		var selectionCount = modifiers.Count;
 
 		var minRange = self.DynamicVars["MinRange"].IntValue;
 		var maxRange = self.DynamicVars["MaxRange"].IntValue;
