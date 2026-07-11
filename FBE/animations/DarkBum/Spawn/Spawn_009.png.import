@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgc0xukv7pfvf"
-path="res://.godot/imported/FloatDown_002.png-f8d333891ba338de00075f1b729ae946.ctex"
+uid="uid://dl0ethvoilj07"
+path="res://.godot/imported/Spawn_009.png-7ee8938cad746cacf8eb76ccf4b49683.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://FBE/animations/DarkBum/FloatDown/FloatDown_002.png"
-dest_files=["res://.godot/imported/FloatDown_002.png-f8d333891ba338de00075f1b729ae946.ctex"]
+source_file="res://FBE/animations/DarkBum/Spawn/Spawn_009.png"
+dest_files=["res://.godot/imported/Spawn_009.png-7ee8938cad746cacf8eb76ccf4b49683.ctex"]
 
 [params]
 

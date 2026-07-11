@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4p8e1ycjig8c"
-path="res://.godot/imported/FloatDown_006.png-24727ba71d2a0c05ff85fe7423a8011c.ctex"
+uid="uid://cp8cyl6j2r5vf"
+path="res://.godot/imported/AnarchistCookbook.png-681d6f277ecd2f8a1fe0419cc0015591.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://FBE/animations/DarkBum/FloatDown/FloatDown_006.png"
-dest_files=["res://.godot/imported/FloatDown_006.png-24727ba71d2a0c05ff85fe7423a8011c.ctex"]
+source_file="res://FBE/images/relics/AnarchistCookbook.png"
+dest_files=["res://.godot/imported/AnarchistCookbook.png-681d6f277ecd2f8a1fe0419cc0015591.ctex"]
 
 [params]
 

@@ -4,7 +4,7 @@
 	"FBE-REMOVED_ROAD_SIGN.title": "被拔掉的路标",
 	"FBE-SWORD_OF_STONE_MK2.title": "石之剑MKⅡ",
 	"FBE-SWORD_OF_STONE_MK2.description": "在失去[red]{HealthToLose}[/red]生命之后将变化为一件强力[gold]遗物[/gold]。",
-	"FBE-SWORD_OF_STONE_MK2.flavor": "[red]这是石之剑MKⅡ……[/red]",
+	"FBE-SWORD_OF_STONE_MK2.flavor": "[red]这是石之剑的第二代发售版本[/red]",
 	"FBE-INSIGHT.title": "洞见",
 	"FBE-INSIGHT.description": "拾起时，查看[blue]{RewardCount}[/blue]张来自[gold]随机角色[/gold]的牌。从中选择任意数量的卡牌加入你的[gold]牌组[/gold]。",
 	"FBE-INSIGHT.flavor": "[red]这股力量不属于你[/red]",
@@ -22,9 +22,12 @@
 	"FBE-P_H_D.description": "当你使用药水时，获得{Energy:energyIcons()}。",
 	"FBE-P_H_D.flavor": "[blue]更好的药水[/blue]",
 	"FBE-DARK_BUM.title": "黑暗乞丐",
-	"FBE-DARK_BUM.description": "[gold]消耗[/gold]你每回合打出的第一张牌，并获得一个随机效果。",
+	"FBE-DARK_BUM.description": "[gold]消耗[/gold]你每回合打出的第一张牌，并获得一个[gold]随机效果[/gold]。",
 	"FBE-DARK_BUM.flavor": "[blue]他想要你的命[/blue]",
 	"FBE-ANARCHIST_COOKBOOK.title": "无政府主义者食谱",
 	"FBE-ANARCHIST_COOKBOOK.description": "战斗开始时，获得一层[gold]乱战[/gold]，然后将一张[gold]乱战[/gold]加入你的手牌。",
-	"FBE-ANARCHIST_COOKBOOK.flavor": "[blue]不要让人猜到你的下一步行动[/blue]"
+	"FBE-ANARCHIST_COOKBOOK.flavor": "[blue]不要让人猜到你的下一步行动[/blue]",
+	"FBE-STARTER_DECK.title": "新手牌组",
+	"FBE-STARTER_DECK.description": "拾起时，从[blue]6[/blue]个独特的卡牌包中选择[blue]3[/blue]包加入你的[gold]牌组[/gold]。",
+	"FBE-STARTER_DECK.flavor": "[blue]你需要的都在这了[/blue]"
 }
