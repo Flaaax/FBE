@@ -1,11 +1,10 @@
+using FBE.Scripts.Relics;
 using Godot;
 using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Acts;
 using MegaCrit.Sts2.Core.Models.Relics;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
-using STS2RitsuLib.Utils;
 
 namespace FBE.Scripts.Ancients;
 
@@ -38,8 +37,8 @@ public class TaintedCain : ModAncientEventTemplate
 	// 固定池一和二
 	private IReadOnlyList<EventOption> Pool1 =>
 	[
-		CreateModRelicOption<Akabeko>(),
-		CreateModRelicOption<Anchor>(),
+		CreateModRelicOption<DarkBum>(),
+		CreateModRelicOption<AnarchistCookbook>(),
 	];
 
 	private IReadOnlyList<EventOption> Pool2 =>
@@ -49,11 +48,11 @@ public class TaintedCain : ModAncientEventTemplate
 	];
 
 	// 带权重池三。权重越大越有机会生成。当然你也可以写自定义的列表生成函数
-	private WeightedList<EventOption> Pool3 => new()
-	{
-		{ CreateModRelicOption<YummyCookie>(), 2 },
-		{ CreateModRelicOption<WingCharm>(), 1 }
-	};
+	private IReadOnlyList<EventOption> Pool3 =>
+	[
+		CreateModRelicOption<YummyCookie>(),
+		CreateModRelicOption<LordsParasol>()
+	];
 
 	// 所有可能的选项
 	public override IEnumerable<EventOption> AllPossibleOptions => [.. Pool1, .. Pool2, .. Pool3];
@@ -65,10 +64,11 @@ public class TaintedCain : ModAncientEventTemplate
 		[
 			Rng.NextItem(Pool1)!,
 			Rng.NextItem(Pool2)!,
-			Pool3.GetRandom(Rng),
+			Rng.NextItem(Pool3)!,
+			// Pool3.GetRandom(Rng),
 		];
 	}
 
-	// 出现条件。这里是只能在密林出现
+	// 出现条件
 	public override bool IsValidForAct(ActModel act) => act.Index == 1;
 }

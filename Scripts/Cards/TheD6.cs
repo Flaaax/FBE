@@ -21,7 +21,6 @@ public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Tok
 	protected override Type PortraitOverride => typeof(TheD6);
 
 	public int Index { get; private set; }
-	private int _value;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -37,7 +36,6 @@ public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Tok
 		_runtimeTitle = property;
 		_runtimeProperty = property;
 		Index = index;
-		_value = value;
 
 		((StringVar)DynamicVars["property"]).StringValue = property;
 		DynamicVars["value"].BaseValue = value;

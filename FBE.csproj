@@ -1,6 +1,6 @@
 <Project Sdk="Godot.NET.Sdk/4.5.1">
     <PropertyGroup>
-        <!-- 如果你安装了10.0并遇到问题，改下这里 -->
+        <!-- 如果你安装了 .NET 10.0 并遇到问题，改这里 -->
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>true</ImplicitUsings>
         <LangVersion>12.0</LangVersion>
@@ -9,12 +9,12 @@
 
         <!-- 改成你的杀戮尖塔2目录 -->
         <Sts2Dir>D:\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
+
+        <!-- 改成你的 Godot Mono 可执行文件路径 -->
         <GodotExe>C:\dev\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
+
         <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
-
-        
-<!--        <RitsuLibDeployDir>$(Sts2Dir)/mods/STS2-RitsuLib/</RitsuLibDeployDir>-->
-
+        <ModDeployDir>$(Sts2Dir)\mods\$(MSBuildProjectName)</ModDeployDir>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -23,7 +23,8 @@
     </PropertyGroup>
 
     <Target Name="CheckProcessBeforeBuild"
-            BeforeTargets="PrepareForBuild">
+            BeforeTargets="PrepareForBuild"
+            Condition="'$(IsInnerGodotExport)' != 'true'">
 
         <Exec
                 Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Get-Process -Name '$(BlockBuildIfProcessRunning)' -ErrorAction SilentlyContinue) { exit 1 } else { exit 0 }&quot;"
@@ -33,7 +34,7 @@
 
         <Error
                 Condition="'$(_ProcessCheckExitCode)' != '0'"
-                Text="检测到进程 $(BlockBuildIfProcessRunning).exe 正在运行，已中止构建。请先关闭游戏后再重新build。"/>
+                Text="检测到进程 $(BlockBuildIfProcessRunning).exe 正在运行，已中止构建。请先关闭游戏后再重新 build。"/>
     </Target>
 
     <ItemGroup>
@@ -47,32 +48,52 @@
             <Private>false</Private>
         </Reference>
 
+        <!-- 如果你最终不想依赖 RitsuLib，就删掉这一行 -->
         <PackageReference Include="STS2.RitsuLib" Version="*" />
 
-        <!--        <Reference Include="BaseLib">-->
-        <!--            <HintPath>E:\STS\STS2\BaseLib Bin\BaseLib.dll</HintPath>-->
-        <!--            <Private>false</Private>-->
-        <!--        </Reference>-->
+        <!--
+        <Reference Include="BaseLib">
+            <HintPath>E:\STS\STS2\BaseLib Bin\BaseLib.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        -->
     </ItemGroup>
 
-<!--    <ItemGroup>-->
-<!--        <Content Include="FBE\images\cards\BloodFeud.png"/>-->
-<!--        <Content Include="FBE\scenes\TaintedCain.tscn" />-->
-<!--    </ItemGroup>-->
+    <!--
+    <ItemGroup>
+        <Content Include="FBE\images\cards\BloodFeud.png"/>
+        <Content Include="FBE\scenes\TaintedCain.tscn"/>
+    </ItemGroup>
+    -->
 
-    <!-- 自动复制dll和json -->
-    <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+    <!-- 自动复制 dll 和 json -->
+    <Target Name="CopyMod"
+            AfterTargets="PostBuildEvent"
+            Condition="'$(IsInnerGodotExport)' != 'true'">
+
         <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>
-        <MakeDir Directories="$(Sts2Dir)\mods\"/>
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\"/>
-        <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"/>
+
+        <MakeDir Directories="$(ModDeployDir)"/>
+
+        <Copy
+                SourceFiles="$(TargetPath)"
+                DestinationFolder="$(ModDeployDir)"/>
+
+        <Copy
+                SourceFiles="$(MSBuildProjectDirectory)\$(MSBuildProjectName).json"
+                DestinationFolder="$(ModDeployDir)"/>
     </Target>
 
-    <!-- 自动复制导出pck -->
-    <Target Name="ExportPck" AfterTargets="Copy Mod">
-        <Message Text="Copying PCK to Slay the Spire 2 mods folder..." Importance="high"/>
-        <Exec Command="&quot;$(GodotExe)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Dir)/mods/$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
-              EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
-              ContinueOnError="WarnAndContinue"/>
+    <!-- 自动导出 pck -->
+    <Target Name="ExportPck"
+            AfterTargets="CopyMod"
+            Condition="'$(IsInnerGodotExport)' != 'true'">
+
+        <Message Text="Exporting PCK to Slay the Spire 2 mods folder..." Importance="high"/>
+
+        <Exec
+                WorkingDirectory="$(MSBuildProjectDirectory)"
+                Command="&quot;$(GodotExe)&quot; --headless --verbose --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(ModDeployDir)\$(MSBuildProjectName).pck&quot;"
+                EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"/>
     </Target>
 </Project>

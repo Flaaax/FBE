@@ -27,7 +27,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 class Insight : FBERelicModel
 {
     public override RelicRarity Rarity => RelicRarity.Event;
-    public override string CustomIconPath => "res://FBE/images/relics/Insight.png";
+    protected override string CustomIconPath => "res://FBE/images/relics/Insight.png";
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [

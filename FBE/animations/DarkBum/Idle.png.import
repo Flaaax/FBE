@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0k4n07c5cisx"
-path="res://.godot/imported/D6.png-9396486af8e74ee9fe10c7b686a71fca.ctex"
+uid="uid://daojecal47lyq"
+path="res://.godot/imported/Idle.png-d5ab6c3e7de6189270c03f6a2fa56989.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://FBE/images/relics/D6.png"
-dest_files=["res://.godot/imported/D6.png-9396486af8e74ee9fe10c7b686a71fca.ctex"]
+source_file="res://FBE/animations/DarkBum/Idle.png"
+dest_files=["res://.godot/imported/Idle.png-d5ab6c3e7de6189270c03f6a2fa56989.ctex"]
 
 [params]
 

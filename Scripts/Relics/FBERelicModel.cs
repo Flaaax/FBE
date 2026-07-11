@@ -4,7 +4,7 @@ namespace FBE.Scripts.Relics;
 
 public abstract class FBERelicModel : RelicModel, IFBEModel
 {
-    public virtual string? CustomIconPath => $"res://FBE/images/relics/{GetType().Name}.png";
+	protected virtual string? CustomIconPath => $"res://FBE/images/relics/{GetType().Name}.png";
     
     public override string PackedIconPath => CustomIconPath ?? base.PackedIconPath;
 

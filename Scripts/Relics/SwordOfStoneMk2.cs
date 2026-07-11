@@ -20,7 +20,7 @@ class SwordOfStoneMk2 : FBERelicModel
 {
     public override RelicRarity Rarity => RelicRarity.Event;
     public override bool ShowCounter => true;
-    public override string CustomIconPath => "res://FBE/images/relics/sword_of_stone.png";
+    protected override string CustomIconPath => "res://FBE/images/relics/sword_of_stone.png";
     public override int DisplayAmount => Math.Max(DynamicVars["HealthToLose"].IntValue - HealthLost, 0);
     public bool Complete => DisplayAmount == 0;
 

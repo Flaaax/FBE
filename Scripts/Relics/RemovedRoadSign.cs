@@ -19,7 +19,7 @@ public class RemovedRoadSign : FBERelicModel
     // 稀有度
     public override RelicRarity Rarity => RelicRarity.Event;
 
-    public override string CustomIconPath => "res://FBE/images/relics/RemovedRoadSign.png";
+    protected override string CustomIconPath => "res://FBE/images/relics/RemovedRoadSign.png";
 
 
     private int _combatsLeft = 2;

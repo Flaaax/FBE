@@ -18,10 +18,13 @@
 	"FBE-DIPLOPIA.title": "复眼",
 	"FBE-DIPLOPIA.description": "拾起时，复制你的整个[gold]牌组[/gold]。",
 	"FBE-DIPLOPIA.flavor": "[blue]你获得了视功能障碍[/blue]",
-	"FBE-PHD.title": "药学博士证",
-	"FBE-PHD.description": "当你使用药水时，获得{Energy:energyIcons()}。",
-	"FBE-PHD.flavor": "[blue]更好的药水[/blue]",
+	"FBE-P_H_D.title": "药学博士证",
+	"FBE-P_H_D.description": "当你使用药水时，获得{Energy:energyIcons()}。",
+	"FBE-P_H_D.flavor": "[blue]更好的药水[/blue]",
 	"FBE-DARK_BUM.title": "黑暗乞丐",
-	"FBE-DARK_BUM.description": "占位描述",
-	"FBE-DARK_BUM.flavor": "[blue]他想要你的命[/blue]"
+	"FBE-DARK_BUM.description": "[gold]消耗[/gold]你每回合打出的第一张牌，并获得一个随机效果。",
+	"FBE-DARK_BUM.flavor": "[blue]他想要你的命[/blue]",
+	"FBE-ANARCHIST_COOKBOOK.title": "无政府主义者食谱",
+	"FBE-ANARCHIST_COOKBOOK.description": "战斗开始时，获得一层[gold]乱战[/gold]，然后将一张[gold]乱战[/gold]加入你的手牌。",
+	"FBE-ANARCHIST_COOKBOOK.flavor": "[blue]不要让人猜到你的下一步行动[/blue]"
 }
