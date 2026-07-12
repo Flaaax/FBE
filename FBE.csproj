@@ -13,6 +13,12 @@
         <!-- 改成你的 Godot Mono 可执行文件路径 -->
         <GodotExe>C:\dev\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
 
+        <!-- Rider/Visual Studio 可从解决方案配置下拉框切换代码模型使用的游戏版本。 -->
+        <Sts2GameVersion Condition="'$(Configuration)' == 'Release 0.107.1'">0.107.1</Sts2GameVersion>
+        <Sts2GameVersion Condition="'$(Configuration)' == 'Release 0.108.0'">0.108.0</Sts2GameVersion>
+        <Optimize Condition="'$(Configuration)' == 'Release 0.107.1' Or '$(Configuration)' == 'Release 0.108.0'">true</Optimize>
+        <DebugType Condition="'$(Configuration)' == 'Release 0.107.1' Or '$(Configuration)' == 'Release 0.108.0'">portable</DebugType>
+
         <!-- 默认按当前已支持的 beta 版编译 -->
         <Sts2GameVersion Condition="'$(Sts2GameVersion)' == ''">0.108.0</Sts2GameVersion>
 
@@ -25,8 +31,8 @@
         <!-- 部署目录仍然指向实际 Steam 游戏目录 -->
         <ModDeployDir>$(Sts2Dir)\mods\$(MSBuildProjectName)</ModDeployDir>
 
-        <!-- 当前构建目标游戏版本。默认按 0.108.0 编译。 -->
-        <Sts2Version Condition="'$(Sts2Version)' == ''">0.108.0</Sts2Version>
+        <!-- 保留给分派代码使用，并始终与编译引用版本一致。 -->
+        <Sts2Version Condition="'$(Sts2Version)' == ''">$(Sts2GameVersion)</Sts2Version>
 
         <!-- 以后 Dispatch 会需要 Runtime DLL 和入口 DLL 不同名。 -->
         <AssemblyName>$(MSBuildProjectName)</AssemblyName>
@@ -37,6 +43,8 @@
         <!-- 跟据编译选项设置对应宏-->
         <DefineConstants Condition="'$(Sts2GameVersion)' == '0.107.1'">$(DefineConstants);STS2_0_107_1</DefineConstants>
         <DefineConstants Condition="'$(Sts2GameVersion)' == '0.108.0'">$(DefineConstants);STS2_0_108_0</DefineConstants>
+        <Configurations>Release 0.107.1;Release 0.108.0;ExportDebug;ExportRelease</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>

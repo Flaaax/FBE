@@ -22,36 +22,40 @@ using FileAccess = Godot.FileAccess;
 [Pool(typeof(NecrobinderCardPool))]
 public class BloodFeud() : FBECardModel(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
-    protected override bool ShouldGlowRedInternal => Owner.IsOstyMissing;
+	protected override bool ShouldGlowRedInternal => Owner.IsOstyMissing;
 
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new OstyDamageVar(6m, ValueProp.Move),
-        new RepeatVar(2)
-    ];
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new OstyDamageVar(6m, ValueProp.Move),
+		new RepeatVar(2)
+	];
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<DoomPower>()];
+	protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromPower<DoomPower>()];
 
-    protected override HashSet<CardTag> CanonicalTags => [CardTag.OstyAttack];
+	protected override HashSet<CardTag> CanonicalTags => [CardTag.OstyAttack];
 
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        ArgumentNullException.ThrowIfNull(cardPlay.Target);
-        if (!Osty.CheckMissingWithAnim(Owner))
-        {
-            var hitCount = !cardPlay.Target.HasPower<DoomPower>() ? 1 : (DynamicVars.Repeat.IntValue + 1);
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		ArgumentNullException.ThrowIfNull(cardPlay.Target);
+		if (!Osty.CheckMissingWithAnim(Owner))
+		{
+			var hitCount = !cardPlay.Target.HasPower<DoomPower>() ? 1 : (DynamicVars.Repeat.IntValue + 1);
+			await DamageCmd.Attack(DynamicVars.OstyDamage.BaseValue)
+#if STS2_0_107_1
+				.FromOsty(Owner.Osty!, this)
+#else
+				.FromOsty(Owner.Osty!, this, cardPlay)
+#endif
+				.WithHitCount(hitCount)
+				.Targeting(cardPlay.Target)
+				.WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
+				.Execute(choiceContext);
+		}
+	}
 
-            await DamageCmd.Attack(DynamicVars.OstyDamage.BaseValue).FromOsty(Owner.Osty!, this, cardPlay)
-                .WithHitCount(hitCount)
-                .Targeting(cardPlay.Target)
-                .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
-                .Execute(choiceContext);
-        }
-    }
-
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Repeat.UpgradeValueBy(1m);
-    }
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Repeat.UpgradeValueBy(1m);
+	}
 }

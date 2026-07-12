@@ -18,29 +18,35 @@ namespace FBE.Scripts.Cards;
 [Pool(typeof(SilentCardPool))]
 public class Industry() : FBECardModel(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new DamageVar(14m, ValueProp.Move),
-        new CardsVar(10)
-    ];
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DamageVar(14m, ValueProp.Move),
+		new CardsVar(10)
+	];
 
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        ArgumentNullException.ThrowIfNull(cardPlay.Target);
-        await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this, cardPlay).Targeting(cardPlay.Target)
-            .WithHitFx("vfx/vfx_attack_slash", null, "heavy_attack.mp3")
-            .Execute(choiceContext);
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		ArgumentNullException.ThrowIfNull(cardPlay.Target);
+		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+#if STS2_0_107_1
+			.FromCard(this)
+#else
+			.FromCard(this, cardPlay)
+#endif
+			.Targeting(cardPlay.Target)
+			.WithHitFx("vfx/vfx_attack_slash", null, "heavy_attack.mp3")
+			.Execute(choiceContext);
 
-        var maxDraw = 10 - base.Owner.PlayerCombatState!.Hand.Cards.Count;
-        var draw = Math.Min(maxDraw, DynamicVars.Cards.IntValue);
+		var maxDraw = 10 - base.Owner.PlayerCombatState!.Hand.Cards.Count;
+		var draw = Math.Min(maxDraw, DynamicVars.Cards.IntValue);
 
-        var cards = await CardPileCmd.Draw(choiceContext, draw, Owner);
-        await CardCmd.Discard(choiceContext, cards);
-    }
+		var cards = await CardPileCmd.Draw(choiceContext, draw, Owner);
+		await CardCmd.Discard(choiceContext, cards);
+	}
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Damage.UpgradeValueBy(5);
-    }
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Damage.UpgradeValueBy(5);
+	}
 }
