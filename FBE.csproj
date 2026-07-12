@@ -7,23 +7,36 @@
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-        <!-- 改成你的杀戮尖塔2目录 -->
+        <!-- 改成你的杀戮尖塔2实际安装目录：只用于部署和运行，不再用于编译引用 -->
         <Sts2Dir>D:\Steam\steamapps\common\Slay the Spire 2</Sts2Dir>
 
         <!-- 改成你的 Godot Mono 可执行文件路径 -->
         <GodotExe>C:\dev\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
 
-        <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
+        <!-- 默认按当前已支持的 beta 版编译 -->
+        <Sts2GameVersion Condition="'$(Sts2GameVersion)' == ''">0.108.0</Sts2GameVersion>
+
+        <!-- 本机缓存的不同游戏版本 DLL 根目录 -->
+        <Sts2BinaryRoot>E:\STS\STS2\STS2 binary</Sts2BinaryRoot>
+
+        <!-- 编译引用目录 -->
+        <Sts2DataDir>$(Sts2BinaryRoot)\$(Sts2GameVersion)\data_sts2_windows_x86_64</Sts2DataDir>
+
+        <!-- 部署目录仍然指向实际 Steam 游戏目录 -->
         <ModDeployDir>$(Sts2Dir)\mods\$(MSBuildProjectName)</ModDeployDir>
 
         <!-- 当前构建目标游戏版本。默认按 0.108.0 编译。 -->
         <Sts2Version Condition="'$(Sts2Version)' == ''">0.108.0</Sts2Version>
 
         <!-- 以后 Dispatch 会需要 Runtime DLL 和入口 DLL 不同名。 -->
-        <AssemblyName>FBE.Runtime</AssemblyName>
+        <AssemblyName>$(MSBuildProjectName)</AssemblyName>
 
         <!-- 默认 build 时仍然部署；手动传 -p:DeployMod=false 可只编译不复制到 mods。 -->
         <DeployMod Condition="'$(DeployMod)' == ''">true</DeployMod>
+
+        <!-- 跟据编译选项设置对应宏-->
+        <DefineConstants Condition="'$(Sts2GameVersion)' == '0.107.1'">$(DefineConstants);STS2_0_107_1</DefineConstants>
+        <DefineConstants Condition="'$(Sts2GameVersion)' == '0.108.0'">$(DefineConstants);STS2_0_108_0</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -58,7 +71,7 @@
         </Reference>
 
         <!-- 如果你最终不想依赖 RitsuLib，就删掉这一行 -->
-        <PackageReference Include="STS2.RitsuLib" Version="*" />
+        <PackageReference Include="STS2.RitsuLib" Version="*"/>
 
         <!--
         <Reference Include="BaseLib">
