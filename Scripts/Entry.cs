@@ -39,8 +39,7 @@ public class Entry
 		_harmony = new Harmony("STS2.FBE");
 		_harmony.PatchAll();
 
-		FBEConfig.Load();
-		OptionalRitsuLibIntegration.Initialize();
+		FBEConfig.RegisterSettingsPage();
 
 		// RitsuLib 注册器
 		var assembly = Assembly.GetExecutingAssembly();

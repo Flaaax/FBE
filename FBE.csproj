@@ -15,6 +15,15 @@
 
         <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
         <ModDeployDir>$(Sts2Dir)\mods\$(MSBuildProjectName)</ModDeployDir>
+
+        <!-- 当前构建目标游戏版本。默认按 0.108.0 编译。 -->
+        <Sts2Version Condition="'$(Sts2Version)' == ''">0.108.0</Sts2Version>
+
+        <!-- 以后 Dispatch 会需要 Runtime DLL 和入口 DLL 不同名。 -->
+        <AssemblyName>FBE.Runtime</AssemblyName>
+
+        <!-- 默认 build 时仍然部署；手动传 -p:DeployMod=false 可只编译不复制到 mods。 -->
+        <DeployMod Condition="'$(DeployMod)' == ''">true</DeployMod>
     </PropertyGroup>
 
     <PropertyGroup>

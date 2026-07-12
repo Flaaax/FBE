@@ -8,8 +8,10 @@
 	"has_dll": true,
 	"dependencies": [
 		{
-			"id": "STS2-RitsuLib"
+			"id": "STS2-RitsuLib",
+			"min_version": "0.4.26"
 		}
 	],
+	"min_game_version": "0.107.0",
 	"affects_gameplay": true
 }
