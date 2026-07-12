@@ -162,9 +162,6 @@ public class TheD6() : FBECardModel(1, CardType.Skill, CardRarity.Uncommon, Targ
 		new IntVar("MaxRange", 6)
 	];
 
-	// name, value, modifier
-
-
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		await _myBase.OnPlay(choiceContext, cardPlay, this);

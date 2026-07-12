@@ -5,9 +5,10 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace FBE.Scripts.Cards;
@@ -15,56 +16,81 @@ namespace FBE.Scripts.Cards;
 [Pool(typeof(ColorlessCardPool))]
 public class GiantKiller() : FBECardModel(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new CalculationBaseVar(4m),
-        new ExtraDamageVar(4m),
-        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(CalcMultiplier),
-        new IntVar("Multiplier", 8m),
-        new IntVar("PlayerCount", GetPlayerCount())
-    ];
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DamageVar(4m, ValueProp.Move),
+		new IntVar("Multiplier", 10m)
+	];
 
+	protected override bool ShouldGlowGoldInternal =>
+		CombatState?.HittableEnemies.Any(IsCriticalTarget) ?? false;
 
-    protected override bool ShouldGlowGoldInternal =>
-        CombatState?.HittableEnemies.Any(e => e.CurrentHp > ModifiedHealth) ?? false;
+	// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+	private int ModifiedHealth => HasExactHealth
+		? Owner.Creature.CurrentHp * (Owner.RunState?.Players.Count ?? 1)
+		: 0;
 
-    // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-    private int ModifiedHealth => IsMutable && Owner is not null ? Owner.Creature.CurrentHp * GetPlayerCount() : 0;
+	private bool HasExactHealth => IsMutable;
 
-    private static int GetPlayerCount() => RunManager.Instance.DebugOnlyGetState()?.Players.Count ?? 1;
+	private bool IsCriticalTarget(Creature? target) =>
+		target is not null && target.CurrentHp > ModifiedHealth;
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        ArgumentNullException.ThrowIfNull(cardPlay.Target);
-        AudioHelper.Play("res://FBE/audio/giant_killer.ogg");
-        var sfx = cardPlay.Target.CurrentHp > ModifiedHealth
-            ? "res://FBE/audio/hit_crit.ogg"
-            : null;
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage)
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		ArgumentNullException.ThrowIfNull(cardPlay.Target);
+		AudioHelper.Play("res://FBE/audio/giant_killer.ogg");
+		var sfx = IsCriticalTarget(cardPlay.Target)
+			? "res://FBE/audio/hit_crit.ogg"
+			: null;
+		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 #if STS2_0_107_1
 	        .FromCard(this)
 #else
 			.FromCard(this, cardPlay)
 #endif
-	        .Targeting(cardPlay.Target)
-            .WithHitFx("vfx/vfx_attack_blunt", sfx, "blunt_attack.mp3")
-            .Execute(choiceContext);
-    }
+			.Targeting(cardPlay.Target)
+			.WithHitFx("vfx/vfx_attack_blunt", sfx, "blunt_attack.mp3")
+			.Execute(choiceContext);
+	}
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars["Multiplier"].UpgradeValueBy(3m);
-    }
+#if STS2_0_107_1
+	public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props,
+		Creature? dealer, CardModel? cardSource)
+#else
+	public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props,
+		Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
+#endif
+	{
+		if (cardSource == this && IsCriticalTarget(target))
+			return DynamicVars["Multiplier"].BaseValue;
 
-    private static decimal CalcMultiplier(CardModel card, Creature? target)
-    {
-        return target != null && target.CurrentHp > ((GiantKiller)card).ModifiedHealth
-            ? card.DynamicVars["Multiplier"].BaseValue - 1
-            : 0;
-    }
+		return 1m;
+	}
 
-    protected override void AddExtraArgsToDescription(LocString description)
-    {
-        description.Add("ModifiedHealth", ModifiedHealth);
-    }
+	public override Task AfterCurrentHpChanged(Creature creature, decimal delta)
+	{
+		if (creature != Owner.Creature) return Task.CompletedTask;
+		var cardNode = NCard.FindOnTable(this);
+		if (Pile != null)
+		{
+			cardNode?.UpdateVisuals(Pile.Type, CardPreviewMode.Normal);
+		}
+		else
+		{
+			Entry.Log.Warn("This is unexpected...");
+		}
+
+		return Task.CompletedTask;
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars["Multiplier"].UpgradeValueBy(4m);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		description.Add("HasExactHealth", HasExactHealth);
+		description.Add("ModifiedHealth", ModifiedHealth);
+	}
 }

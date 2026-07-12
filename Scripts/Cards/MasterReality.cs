@@ -17,7 +17,7 @@ using FileAccess = Godot.FileAccess;
 namespace FBE.Scripts.Cards;
 
 [Pool(typeof(ColorlessCardPool))]
-public class MasterReality() : FBECardModel(1, CardType.Power, CardRarity.Uncommon, TargetType.None)
+public class MasterReality() : FBECardModel(0, CardType.Power, CardRarity.Uncommon, TargetType.None)
 {
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

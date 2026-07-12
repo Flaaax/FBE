@@ -123,19 +123,19 @@
     </ItemGroup>
     -->
 
-    <Target Name="CheckProcessBeforeBuild"
-            BeforeTargets="PrepareForBuild"
-            Condition="'$(IsInnerGodotExport)' != 'true'">
-        <Exec
-                Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Get-Process -Name '$(BlockBuildIfProcessRunning)' -ErrorAction SilentlyContinue) { exit 1 } else { exit 0 }&quot;"
-                IgnoreExitCode="true">
-            <Output TaskParameter="ExitCode" PropertyName="_ProcessCheckExitCode"/>
-        </Exec>
+<!--    <Target Name="CheckProcessBeforeBuild"-->
+<!--            BeforeTargets="PrepareForBuild"-->
+<!--            Condition="'$(IsInnerGodotExport)' != 'true'">-->
+<!--        <Exec-->
+<!--                Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Get-Process -Name '$(BlockBuildIfProcessRunning)' -ErrorAction SilentlyContinue) { exit 1 } else { exit 0 }&quot;"-->
+<!--                IgnoreExitCode="true">-->
+<!--            <Output TaskParameter="ExitCode" PropertyName="_ProcessCheckExitCode"/>-->
+<!--        </Exec>-->
 
-        <Error
-                Condition="'$(_ProcessCheckExitCode)' != '0'"
-                Text="检测到进程 $(BlockBuildIfProcessRunning).exe 正在运行，已中止构建。请先关闭游戏后再重新 build。"/>
-    </Target>
+<!--        <Error-->
+<!--                Condition="'$(_ProcessCheckExitCode)' != '0'"-->
+<!--                Text="检测到进程 $(BlockBuildIfProcessRunning).exe 正在运行，已中止构建。请先关闭游戏后再重新 build。"/>-->
+<!--    </Target>-->
 
 
     <!--

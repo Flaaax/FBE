@@ -25,7 +25,7 @@
 	"FBE-MASTER_REALITY.title": "Master Reality",
 	"FBE-MASTER_REALITY.description": "Whenever you create a card, [gold]Upgrade[/gold] it.",
 	"FBE-GIANT_KILLER.title": "Giant Killer",
-	"FBE-GIANT_KILLER.description": "Deal {CalculatedDamage:diff()} damage.\nIf the target's HP {InCombat:is above [red]{ModifiedHealth}[/red]|[blue]is high enough[/blue]}, deal {Multiplier:diff()} times as much damage.",
+	"FBE-GIANT_KILLER.description": "Deal {Damage:diff()} damage.\nIf the target's HP {HasExactHealth:is above [red]{ModifiedHealth}[/red]|[blue]is high enough[/blue]}, deal {Multiplier:diff()} times as much damage.",
 	"FBE-AGGREGATE.title": "Aggregate",
 	"FBE-AGGREGATE.description": "For every {EnergyPerCard:diff()} cards in your [gold]Draw Pile[/gold], gain {energyPrefix:energyIcons(1)}.{InCombat:\n(Gain {CalculatedEnergy:energyIcons()})|}",
 	"FBE-DEMON.title": "Demon",
