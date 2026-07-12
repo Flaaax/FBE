@@ -13,3 +13,5 @@ icon.svg.import
 export_credentials.cfg
 *.translation
 *.tmp
+
+dist/

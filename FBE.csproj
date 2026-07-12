@@ -13,38 +13,60 @@
         <!-- 改成你的 Godot Mono 可执行文件路径 -->
         <GodotExe>C:\dev\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
 
-        <!-- Rider/Visual Studio 可从解决方案配置下拉框切换代码模型使用的游戏版本。 -->
-        <Sts2GameVersion Condition="'$(Configuration)' == 'Release 0.107.1'">0.107.1</Sts2GameVersion>
-        <Sts2GameVersion Condition="'$(Configuration)' == 'Release 0.108.0'">0.108.0</Sts2GameVersion>
-        <Optimize Condition="'$(Configuration)' == 'Release 0.107.1' Or '$(Configuration)' == 'Release 0.108.0'">true</Optimize>
-        <DebugType Condition="'$(Configuration)' == 'Release 0.107.1' Or '$(Configuration)' == 'Release 0.108.0'">portable</DebugType>
-
-        <!-- 默认按当前已支持的 beta 版编译 -->
-        <Sts2GameVersion Condition="'$(Sts2GameVersion)' == ''">0.108.0</Sts2GameVersion>
-
         <!-- 本机缓存的不同游戏版本 DLL 根目录 -->
         <Sts2BinaryRoot>E:\STS\STS2\STS2 binary</Sts2BinaryRoot>
+
+        <!-- 配置名形如 Release 0.108.0 时，自动解析出游戏版本。也可以用 -p:Sts2GameVersion=0.108.0 覆盖。 -->
+        <Sts2GameVersion Condition="'$(Sts2GameVersion)' == '' and $([System.String]::Copy('$(Configuration)').StartsWith('Release '))">$([System.String]::Copy('$(Configuration)').Substring(8))</Sts2GameVersion>
+
+        <!-- 默认按当前 beta 版编译。裸 dotnet build 只编译，不自动打包。 -->
+        <Sts2GameVersion Condition="'$(Sts2GameVersion)' == ''">0.108.0</Sts2GameVersion>
 
         <!-- 编译引用目录 -->
         <Sts2DataDir>$(Sts2BinaryRoot)\$(Sts2GameVersion)\data_sts2_windows_x86_64</Sts2DataDir>
 
-        <!-- 部署目录仍然指向实际 Steam 游戏目录 -->
+        <!-- 游戏 mods 目录。新的打包流程会直接输出到这里。 -->
         <ModDeployDir>$(Sts2Dir)\mods\$(MSBuildProjectName)</ModDeployDir>
+        <DispatchPublishDir Condition="'$(DispatchPublishDir)' == ''">$(ModDeployDir)</DispatchPublishDir>
 
-        <!-- 保留给分派代码使用，并始终与编译引用版本一致。 -->
+        <!-- 保留给代码使用，并始终与编译引用版本一致。 -->
         <Sts2Version Condition="'$(Sts2Version)' == ''">$(Sts2GameVersion)</Sts2Version>
 
-        <!-- 以后 Dispatch 会需要 Runtime DLL 和入口 DLL 不同名。 -->
+        <!-- 普通程序集名是 FBE；Runtime-only 构建时改成 FBE.Runtime。 -->
         <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+        <BuildRuntimeOnly Condition="'$(BuildRuntimeOnly)' == ''">false</BuildRuntimeOnly>
+        <AssemblyName Condition="'$(BuildRuntimeOnly)' == 'true'">$(MSBuildProjectName).Runtime</AssemblyName>
 
-        <!-- 默认 build 时仍然部署；手动传 -p:DeployMod=false 可只编译不复制到 mods。 -->
-        <DeployMod Condition="'$(DeployMod)' == ''">true</DeployMod>
+        <!-- 旧部署流程默认关闭。需要旧行为时可以显式传 -p:DeployMod=true。 -->
+        <DeployMod Condition="'$(DeployMod)' == ''">false</DeployMod>
 
-        <!-- 跟据编译选项设置对应宏-->
-        <DefineConstants Condition="'$(Sts2GameVersion)' == '0.107.1'">$(DefineConstants);STS2_0_107_1</DefineConstants>
-        <DefineConstants Condition="'$(Sts2GameVersion)' == '0.108.0'">$(DefineConstants);STS2_0_108_0</DefineConstants>
+        <!-- 内部开关：通常不需要手动传。 -->
+        <CollectRuntime Condition="'$(CollectRuntime)' == ''">false</CollectRuntime>
+        <CollectModAssets Condition="'$(CollectModAssets)' == ''">false</CollectModAssets>
+        <EnableJmcDispatch Condition="'$(EnableJmcDispatch)' == ''">false</EnableJmcDispatch>
+
+        <!-- 根据 Sts2GameVersion 自动生成条件编译宏，例如 0.108.0 -> STS2_0_108_0。 -->
+        <Sts2GameVersionDefine>STS2_$([System.String]::Copy('$(Sts2GameVersion)').Replace('.', '_'))</Sts2GameVersionDefine>
+        <DefineConstants>$(DefineConstants);$(Sts2GameVersionDefine)</DefineConstants>
+
+        <Optimize Condition="$([System.String]::Copy('$(Configuration)').StartsWith('Release '))">true</Optimize>
+        <DebugType Condition="$([System.String]::Copy('$(Configuration)').StartsWith('Release '))">portable</DebugType>
+
         <Configurations>Release 0.107.1;Release 0.108.0;ExportDebug;ExportRelease</Configurations>
         <Platforms>AnyCPU</Platforms>
+
+        <!-- JML Dispatch 只作为构建期工具使用，不代表运行时依赖 JML。 -->
+        <JmcModLibDir>E:\STS\STS2\BuildTools\JmcModLib</JmcModLibDir>
+
+        <JmcDispatchModName>$(MSBuildProjectName)</JmcDispatchModName>
+        <JmcDispatchPublishDir>$(DispatchPublishDir)</JmcDispatchPublishDir>
+        <JmcDispatchInitializerType>FBE.Scripts.Entry</JmcDispatchInitializerType>
+        <JmcDispatchInitializerMethod>Init</JmcDispatchInitializerMethod>
+
+        <!-- Runtime 由 BuildRuntimeOnly 控制 AssemblyName，不让 Dispatch targets 自动改。 -->
+        <JmcDispatchSetRuntimeAssemblyName>false</JmcDispatchSetRuntimeAssemblyName>
+        <JmcDispatchRuntimeAssemblyName>$(MSBuildProjectName).Runtime</JmcDispatchRuntimeAssemblyName>
+        <JmcDispatchRuntimeFileName>$(MSBuildProjectName).Runtime.dll</JmcDispatchRuntimeFileName>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -52,20 +74,18 @@
         <BlockBuildIfProcessRunning>SlayTheSpire2</BlockBuildIfProcessRunning>
     </PropertyGroup>
 
-    <Target Name="CheckProcessBeforeBuild"
-            BeforeTargets="PrepareForBuild"
-            Condition="'$(IsInnerGodotExport)' != 'true'">
+    <ItemGroup>
+        <!-- 以后版本升级时，优先只改这里。 -->
+        <Sts2SupportedVersion Include="0.107.1">
+            <Configuration>Release 0.107.1</Configuration>
+            <MaxGameVersionExclusive>0.108.0</MaxGameVersionExclusive>
+        </Sts2SupportedVersion>
 
-        <Exec
-                Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Get-Process -Name '$(BlockBuildIfProcessRunning)' -ErrorAction SilentlyContinue) { exit 1 } else { exit 0 }&quot;"
-                IgnoreExitCode="true">
-            <Output TaskParameter="ExitCode" PropertyName="_ProcessCheckExitCode"/>
-        </Exec>
-
-        <Error
-                Condition="'$(_ProcessCheckExitCode)' != '0'"
-                Text="检测到进程 $(BlockBuildIfProcessRunning).exe 正在运行，已中止构建。请先关闭游戏后再重新 build。"/>
-    </Target>
+        <Sts2SupportedVersion Include="0.108.0">
+            <Configuration>Release 0.108.0</Configuration>
+            <MaxGameVersionExclusive>0.109.0</MaxGameVersionExclusive>
+        </Sts2SupportedVersion>
+    </ItemGroup>
 
     <ItemGroup>
         <Reference Include="sts2">
@@ -78,7 +98,6 @@
             <Private>false</Private>
         </Reference>
 
-        <!-- 如果你最终不想依赖 RitsuLib，就删掉这一行 -->
         <PackageReference Include="STS2.RitsuLib" Version="*"/>
 
         <!--
@@ -90,40 +109,173 @@
     </ItemGroup>
 
     <!--
+        给 JML Dispatch targets 一个占位 runtime，防止它在导入阶段自动生成 default runtime。
+        真正的 JmcDispatchRuntime 条目会在 PrepareJmcDispatchRuntimeItems 目标中生成。
+    -->
+    <ItemGroup Condition="'$(EnableJmcDispatch)' == 'true'">
+        <JmcDispatchRuntime Include="__placeholder__"/>
+    </ItemGroup>
+
+    <!--
     <ItemGroup>
         <Content Include="FBE\images\cards\BloodFeud.png"/>
         <Content Include="FBE\scenes\TaintedCain.tscn"/>
     </ItemGroup>
     -->
 
-    <!-- 自动复制 dll 和 json -->
-    <Target Name="CopyMod"
-            AfterTargets="PostBuildEvent"
+    <Target Name="CheckProcessBeforeBuild"
+            BeforeTargets="PrepareForBuild"
             Condition="'$(IsInnerGodotExport)' != 'true'">
+        <Exec
+                Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Get-Process -Name '$(BlockBuildIfProcessRunning)' -ErrorAction SilentlyContinue) { exit 1 } else { exit 0 }&quot;"
+                IgnoreExitCode="true">
+            <Output TaskParameter="ExitCode" PropertyName="_ProcessCheckExitCode"/>
+        </Exec>
 
-        <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>
+        <Error
+                Condition="'$(_ProcessCheckExitCode)' != '0'"
+                Text="检测到进程 $(BlockBuildIfProcessRunning).exe 正在运行，已中止构建。请先关闭游戏后再重新 build。"/>
+    </Target>
 
-        <MakeDir Directories="$(ModDeployDir)"/>
+
+    <!--
+        在 JML Dispatch 规范化之前生成真正的 runtime 条目。
+        不能在顶层 ItemGroup 里用 %(Sts2SupportedVersion.Identity) 生成这些 metadata；
+        否则 metadata 可能不会展开，导致 runtimes\FBE.Runtime.dll 这种空版本路径。
+    -->
+    <Target Name="PrepareJmcDispatchRuntimeItems"
+            BeforeTargets="JmcDispatchNormalize"
+            Condition="'$(EnableJmcDispatch)' == 'true'">
+        <ItemGroup>
+            <JmcDispatchRuntime Remove="@(JmcDispatchRuntime)"/>
+        </ItemGroup>
+
+        <ItemGroup Condition="'$(FbeDispatchPackageVersion)' == ''">
+            <JmcDispatchRuntime Include="%(Sts2SupportedVersion.Identity)">
+                <MinGameVersion>%(Sts2SupportedVersion.Identity)</MinGameVersion>
+                <MaxGameVersionExclusive>%(Sts2SupportedVersion.MaxGameVersionExclusive)</MaxGameVersionExclusive>
+                <RuntimeAssembly>runtimes/%(Sts2SupportedVersion.Identity)/$(MSBuildProjectName).Runtime.dll</RuntimeAssembly>
+                <ProbeDirectories>runtimes/%(Sts2SupportedVersion.Identity)</ProbeDirectories>
+                <SourcePath>$(DispatchPublishDir)\runtimes\%(Sts2SupportedVersion.Identity)\$(MSBuildProjectName).Runtime.dll</SourcePath>
+                <ProbeAllDlls>false</ProbeAllDlls>
+            </JmcDispatchRuntime>
+        </ItemGroup>
+
+        <ItemGroup Condition="'$(FbeDispatchPackageVersion)' != ''">
+            <JmcDispatchRuntime Include="$(FbeDispatchPackageVersion)">
+                <MinGameVersion>$(FbeDispatchPackageVersion)</MinGameVersion>
+                <MaxGameVersionExclusive>$(FbeDispatchPackageMaxGameVersionExclusive)</MaxGameVersionExclusive>
+                <RuntimeAssembly>runtimes/$(FbeDispatchPackageVersion)/$(MSBuildProjectName).Runtime.dll</RuntimeAssembly>
+                <ProbeDirectories>runtimes/$(FbeDispatchPackageVersion)</ProbeDirectories>
+                <SourcePath>$(DispatchPublishDir)\runtimes\$(FbeDispatchPackageVersion)\$(MSBuildProjectName).Runtime.dll</SourcePath>
+                <ProbeAllDlls>false</ProbeAllDlls>
+            </JmcDispatchRuntime>
+        </ItemGroup>
+
+        <Message Text="Prepared JML Dispatch runtime entries: @(JmcDispatchRuntime)" Importance="high"/>
+    </Target>
+
+    <!-- 收集当前构建版本的 Runtime DLL。 -->
+    <Target Name="CollectRuntime"
+            AfterTargets="Build"
+            Condition="'$(BuildRuntimeOnly)' == 'true' and '$(CollectRuntime)' == 'true'">
+        <PropertyGroup>
+            <RuntimePublishDir>$(DispatchPublishDir)\runtimes\$(Sts2GameVersion)</RuntimePublishDir>
+        </PropertyGroup>
+
+        <Message Text="Collecting runtime DLL for STS2 $(Sts2GameVersion)..." Importance="high"/>
+        <Message Text="Source: $(TargetPath)" Importance="high"/>
+        <Message Text="Destination: $(RuntimePublishDir)\$(MSBuildProjectName).Runtime.dll" Importance="high"/>
+
+        <MakeDir Directories="$(RuntimePublishDir)"/>
 
         <Copy
                 SourceFiles="$(TargetPath)"
-                DestinationFolder="$(ModDeployDir)"/>
+                DestinationFiles="$(RuntimePublishDir)\$(MSBuildProjectName).Runtime.dll"
+                SkipUnchangedFiles="true"/>
+    </Target>
+
+    <!-- 收集普通发布资源：FBE.json 和 FBE.pck。不要复制普通 FBE.dll。 -->
+    <Target Name="CollectModAssets"
+            AfterTargets="Build"
+            Condition="'$(IsInnerGodotExport)' != 'true' and '$(BuildRuntimeOnly)' != 'true' and '$(CollectModAssets)' == 'true'">
+        <Message Text="Collecting mod assets to dispatch publish directory..." Importance="high"/>
+
+        <MakeDir Directories="$(DispatchPublishDir)"/>
 
         <Copy
                 SourceFiles="$(MSBuildProjectDirectory)\$(MSBuildProjectName).json"
-                DestinationFolder="$(ModDeployDir)"/>
-    </Target>
-
-    <!-- 自动导出 pck -->
-    <Target Name="ExportPck"
-            AfterTargets="CopyMod"
-            Condition="'$(IsInnerGodotExport)' != 'true'">
-
-        <Message Text="Exporting PCK to Slay the Spire 2 mods folder..." Importance="high"/>
+                DestinationFiles="$(DispatchPublishDir)\$(MSBuildProjectName).json"
+                SkipUnchangedFiles="true"/>
 
         <Exec
                 WorkingDirectory="$(MSBuildProjectDirectory)"
-                Command="&quot;$(GodotExe)&quot; --headless --verbose --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(ModDeployDir)\$(MSBuildProjectName).pck&quot;"
+                Command="&quot;$(GodotExe)&quot; --headless --verbose --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(DispatchPublishDir)\$(MSBuildProjectName).pck&quot;"
                 EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"/>
     </Target>
+
+    <!-- 单版本打包：只刷新当前配置对应的 runtime，并生成只指向该 runtime 的 dispatch。 -->
+    <Target Name="CurrentVersion">
+        <ItemGroup>
+            <_CurrentSts2SupportedVersion Include="@(Sts2SupportedVersion)"
+                                          Condition="'%(Sts2SupportedVersion.Identity)' == '$(Sts2GameVersion)'"/>
+        </ItemGroup>
+
+        <Error
+                Condition="'@(_CurrentSts2SupportedVersion)' == ''"
+                Text="当前 Sts2GameVersion=$(Sts2GameVersion) 不在 Sts2SupportedVersion 矩阵中。请检查 Configuration 或显式传 -p:Sts2GameVersion=完整版本号。"/>
+
+        <Message Text="Packaging $(MSBuildProjectName) for STS2 $(Sts2GameVersion) to $(DispatchPublishDir)..." Importance="high"/>
+
+        <!-- 清掉当前版本 runtime，避免旧 DLL 残留。不会删除其它版本 runtime。 -->
+        <RemoveDir Directories="$(DispatchPublishDir)\runtimes\$(Sts2GameVersion)"/>
+
+        <!-- 1. 编译并收集当前版本 Runtime。 -->
+        <MSBuild
+                Projects="$(MSBuildProjectFullPath)"
+                Targets="Build"
+                Properties="Configuration=$(Configuration);Sts2GameVersion=$(Sts2GameVersion);BuildRuntimeOnly=true;CollectRuntime=true;DeployMod=false;DispatchPublishDir=$(DispatchPublishDir)"/>
+
+        <!-- 2. 生成 Bootstrap FBE.dll 和单版本 FBE.dispatch.json。 -->
+        <MSBuild
+                Projects="$(MSBuildProjectFullPath)"
+                Targets="Build"
+                Properties="Configuration=$(Configuration);Sts2GameVersion=$(Sts2GameVersion);EnableJmcDispatch=true;DeployMod=false;FbeDispatchPackageVersion=$(Sts2GameVersion);FbeDispatchPackageMaxGameVersionExclusive=%(_CurrentSts2SupportedVersion.MaxGameVersionExclusive);DispatchPublishDir=$(DispatchPublishDir)"/>
+
+        <!-- 3. 导出 FBE.pck 并复制 FBE.json。 -->
+        <MSBuild
+                Projects="$(MSBuildProjectFullPath)"
+                Targets="Build"
+                Properties="Configuration=$(Configuration);Sts2GameVersion=$(Sts2GameVersion);DeployMod=false;CollectModAssets=true;DispatchPublishDir=$(DispatchPublishDir)"/>
+    </Target>
+
+    <!-- 全版本打包：刷新版本矩阵中的所有 runtime，并生成全版本 dispatch。 -->
+    <Target Name="AllVersion">
+        <Message Text="Packaging $(MSBuildProjectName) for all supported STS2 versions to $(DispatchPublishDir)..." Importance="high"/>
+
+        <!-- 全量包清掉 runtimes，避免已经移除的旧版本目录残留。 -->
+        <RemoveDir Directories="$(DispatchPublishDir)\runtimes"/>
+
+        <!-- 1. 按版本矩阵编译并收集所有 Runtime。 -->
+        <MSBuild
+                Projects="$(MSBuildProjectFullPath)"
+                Targets="Build"
+                Properties="Configuration=%(Sts2SupportedVersion.Configuration);BuildRuntimeOnly=true;CollectRuntime=true;DeployMod=false;DispatchPublishDir=$(DispatchPublishDir)"/>
+
+        <!-- 2. 生成 Bootstrap FBE.dll 和全版本 FBE.dispatch.json。 -->
+        <MSBuild
+                Projects="$(MSBuildProjectFullPath)"
+                Targets="Build"
+                RemoveProperties="FbeDispatchPackageVersion;FbeDispatchPackageMaxGameVersionExclusive;PackageVersion"
+                Properties="Configuration=$(Configuration);EnableJmcDispatch=true;DeployMod=false;DispatchPublishDir=$(DispatchPublishDir)"/>
+
+        <!-- 3. 导出 FBE.pck 并复制 FBE.json。 -->
+        <MSBuild
+                Projects="$(MSBuildProjectFullPath)"
+                Targets="Build"
+                Properties="Configuration=$(Configuration);DeployMod=false;CollectModAssets=true;DispatchPublishDir=$(DispatchPublishDir)"/>
+    </Target>
+
+    <Import Project="$(JmcModLibDir)\JmcModLib.Dispatch.targets"
+            Condition="'$(EnableJmcDispatch)' == 'true' and Exists('$(JmcModLibDir)\JmcModLib.Dispatch.targets')"/>
 </Project>

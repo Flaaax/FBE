@@ -2,6 +2,7 @@ using System.Reflection;
 using FBE.Scripts.Config;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
@@ -22,15 +23,15 @@ public class Entry
 	public static bool EnableSyncDebugTracePatches { get; private set; }
 
 	private static Harmony? _harmony;
-	
+
 	// 初始化函数
 	public static void Init()
 	{
 		// harmony可用，但是最好用ritsu的封装patch，见补丁系统一章
 		// var harmony = new Harmony("com.example.testmod");
 		// harmony.PatchAll();
-		
-		
+
+
 		//允许Debug日志（会造成日志膨胀）
 		EnableSyncDebugTracePatches = false;
 
@@ -43,16 +44,45 @@ public class Entry
 
 		// RitsuLib 注册器
 		var assembly = Assembly.GetExecutingAssembly();
+		AssociateRuntimeAssemblyWithMod(assembly);
+
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Log);
 		// 自动注册内容
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
-		
+
 		RegisterSavedPropertyModels();
 		// 使得tscn可以加载自定义脚本
 		//ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);
 		Log.Info("Mod initialized!");
 	}
-	
+
+	private static void AssociateRuntimeAssemblyWithMod(Assembly assembly)
+	{
+		// 普通单 DLL 加载时，ModManager 会自行关联 FBE.dll。
+		// 只有多版本分派动态加载的 FBE.Runtime.dll 需要额外关联。
+		if (assembly.GetName().Name == ModId)
+			return;
+
+#if STS2_0_107_1
+		// 0.107.1 会在初始化函数返回后，将 Bootstrap 主程序集重新写入 Mod.assembly。
+		// 等 OnModDetected 触发后再替换为 Runtime，避免这次写回覆盖兼容处理。
+		Action<Mod>? onModDetected = null;
+		onModDetected = mod =>
+		{
+			if (mod.manifest?.id != ModId)
+				return;
+
+			mod.assembly = assembly;
+			Traverse.Create(typeof(ReflectionHelper)).Field("_modTypes").SetValue(null);
+			ModManager.OnModDetected -= onModDetected;
+			Log.Info($"Associated runtime assembly {assembly} with mod {ModId} after detection (0.107.1 compatibility path).");
+		};
+		ModManager.OnModDetected += onModDetected;
+#elif STS2_0_108_0
+		ModManager.AssociateAssemblyWithMod(ModId, assembly);
+#endif
+	}
+
 	private static void RegisterSavedPropertyModels()
 	{
 		const BindingFlags flags =

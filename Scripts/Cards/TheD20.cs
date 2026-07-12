@@ -24,4 +24,9 @@ public class TheD20() : FBECardModel(1, CardType.Skill, CardRarity.Rare, TargetT
     {
         await _myBase.OnPlay(choiceContext, cardPlay, this);
     }
+
+    protected override void OnUpgrade()
+    {
+	    EnergyCost.UpgradeBy(-1);
+    }
 }

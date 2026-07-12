@@ -1,11 +1,17 @@
-﻿## 卡面尺寸
+﻿## 构建
+./build all     全量打包
+
+./build         构建最新版本
+
+./build 0.107.1 构建特定版本
+
+## 卡面尺寸
 普通卡 250x190，先古卡 250x351
 遗物 256*256
 
 ## 模组上传
 
-官方 Uploader
-https://github.com/megacrit/sts2-mod-uploader
+见 E:\STS\STS2\ModUploader
 
 ## 无 mod 运行
 
@@ -19,4 +25,4 @@ https://github.com/megacrit/sts2-mod-uploader
 
 ## TODO
 
-为DarkBum添加帧动画
+为DarkBum添加帧动画   OK
