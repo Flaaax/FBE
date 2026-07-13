@@ -14,5 +14,11 @@
   "FBE-REDEMPTION.flavor": "[blue][i]Deliver us from evil[/i][/blue]",
   "FBE-TOP_HAT.title": "Top Hat",
   "FBE-TOP_HAT.description": "Card rewards contain an additional [gold]Bomb[/gold]. [gold]Bomb[/gold] costs [blue]0[/blue].",
-  "FBE-TOP_HAT.flavor": "[blue]Epic Fetus[/blue]"
+  "FBE-TOP_HAT.flavor": "[blue]Epic Fetus[/blue]",
+  "FBE-STARTER_DECK.title": "Starter Deck",
+  "FBE-STARTER_DECK.description": "Upon pickup, choose [blue]3[/blue] of [blue]6[/blue] unique card bundles to add to your [gold]Deck[/gold].",
+  "FBE-STARTER_DECK.flavor": "[blue]Everything you need is right here[/blue]",
+  "FBE-STARTER_DECK.selectionScreenPrompt": "Choose {Required} card bundles",
+  "FBE-STARTER_DECK.previewAddPrompt": "Confirm to select this card bundle",
+  "FBE-STARTER_DECK.previewRemovePrompt": "Confirm to remove this card bundle"
 }

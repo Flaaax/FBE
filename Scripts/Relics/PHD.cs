@@ -13,7 +13,7 @@ namespace FBE.Scripts.Relics;
 [Pool(typeof(SharedRelicPool))]
 class PHD : FBERelicModel
 {
-	public override RelicRarity Rarity => RelicRarity.Uncommon;
+	public override RelicRarity Rarity => RelicRarity.Common;
 	
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1)];
 

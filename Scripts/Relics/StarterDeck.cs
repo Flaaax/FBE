@@ -19,26 +19,20 @@ class StarterDeck : FBERelicModel
 
 	public override async Task AfterObtained()
 	{
-		var list = GenerateRandomBundleGroups(Owner)
-			.Select(bundle => bundle
-				.Select(pack => pack
-					.Select(c => Owner.RunState.CreateCard(c, Owner))
-					.ToList())
+		var bundles = GenerateRandomBundles(Owner)
+			.Select(pack => pack
+				.Select(c => Owner.RunState.CreateCard(c, Owner))
 				.ToList())
 			.ToList();
 
-		if (list.Count == 0)
+		if (bundles.Count == 0)
 		{
 			Log.Warn("No card options!");
 			return;
 		}
 
-		List<CardModel> selected = [];
-
-		foreach (var bundle in list)
-		{
-			selected.AddRange(await CardSelectCmd.FromChooseABundleScreen(Owner, bundle));
-		}
+		var selectedBundles = await CardSelectHelper.FromChooseBundlesScreen(Owner, bundles, 3);
+		var selected = selectedBundles.SelectMany(bundle => bundle).ToList();
 
 		foreach (var card in selected)
 		{
@@ -46,7 +40,7 @@ class StarterDeck : FBERelicModel
 		}
 	}
 
-	private static List<List<List<CardModel>>> GenerateRandomBundleGroups(Player player)
+	private static List<List<CardModel>> GenerateRandomBundles(Player player)
 	{
 		var rewards = player.PlayerRng.Rewards;
 		var cardPool = player.Character.CardPool;
@@ -69,12 +63,11 @@ class StarterDeck : FBERelicModel
 
 		var sources = options.Select(opt => opt.GetPossibleCards(player).ToList());
 
-		List<List<List<CardModel>>> ret = [];
+		List<List<CardModel>> ret = [];
 		var usedCardIds = new HashSet<ModelId>();
 
 		foreach (var source in sources)
 		{
-			List<List<CardModel>> cardPackBundle = [];
 			for (var i = 0; i < 2; i++)
 			{
 				var selections = source.Where(c => !usedCardIds.Contains(c.Id)).ToList();
@@ -92,10 +85,8 @@ class StarterDeck : FBERelicModel
 					selections.Remove(card);
 				}
 
-				cardPackBundle.Add(cardPack);
+				ret.Add(cardPack);
 			}
-
-			ret.Add(cardPackBundle);
 		}
 
 		return ret;

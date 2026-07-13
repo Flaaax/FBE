@@ -18,7 +18,7 @@ public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Tok
 	public override int MaxUpgradeLevel => 0;
 	public override bool CanBeGeneratedInCombat => false;
 	protected override Type PortraitOverride => typeof(TheD6);
-	
+
 	public int Index { get; private set; }
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -45,14 +45,10 @@ public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Tok
 
 	// protected override void AddExtraArgsToDescription(LocString description)
 	// {
-	// 	if (_runtimeProperty == null)
-	// 	{
-	// 		Log.Warn("This is unexpected...");
-	// 		return;
-	// 	}
-	//
-	// 	description.Add("property", _runtimeProperty);
-	// 	description.Add("value", _value);
+	// 	description.Add("property", _runtimeTitle!);
+	// 	description.Add("value", DynamicVars["value"].IntValue);
+	// 	description.Add("MinRange", DynamicVars["MinRange"].IntValue);
+	// 	description.Add("MaxRange", DynamicVars["MaxRange"].IntValue);
 	// }
 }
 
@@ -69,22 +65,30 @@ public class TheD6Base
 		_propertySelectionPrompt ??=
 			new LocString("cards", Id + ".propertySelectionPrompt");
 
-	private static List<(LocString, int, Action<int>)> GetModifiers(CardModel card)
+	private static List<(string Name, int value, Action<int> Modifier)> GetModifiers(CardModel card)
 	{
-		List<(LocString, int, Action<int>)> ret = [];
+		List<(string, int, Action<int>)> ret = [];
 		if (!card.EnergyCost.CostsX)
 		{
-			ret.Add((new LocString("cards", Id + ".modifier.energy"),
+			ret.Add((new LocString("cards", Id + ".modifier.energy").GetFormattedText(),
 				card.EnergyCost.GetResolved(), // Could this work well?
 				i => card.EnergyCost.SetThisCombat(i)));
 		}
 
 		foreach (var dynVar in card.DynamicVars.Values.Where(dynVar => dynVar is not StringVar))
 		{
-			// "{name}"
-			var str = new LocString("cards", Id + ".modifier.general");
-			str.Add("name", dynVar.Name);
-			ret.Add((str, dynVar.IntValue, i => dynVar.BaseValue = i));
+			var name = dynVar.Name;
+			if (TheD6Helper.TryGetPowerVar(dynVar, out var t) && t != null && dynVar.Name == t.Name)
+			{
+				name = TheD6Helper.GetPower(t).Title.GetFormattedText();
+			}
+			else if (LocString.GetIfExists("cards", Id + ".modifier.named." + dynVar.Name) is
+			         { } name1) // This means name1 is not null
+			{
+				name = name1.GetFormattedText();
+			}
+
+			ret.Add((name, dynVar.IntValue, i => dynVar.BaseValue = i));
 		}
 
 		return ret;
@@ -119,7 +123,7 @@ public class TheD6Base
 		{
 			var (name, value, _) = modifiers[i];
 			var card1 = self.CombatState!.CreateCard<TheD6ChoiceCard>(self.Owner);
-			card1.Init(name.GetFormattedText(), value, i, minRange, maxRange);
+			card1.Init(name, value, i, minRange, maxRange);
 			selections.Add(card1);
 		}
 
