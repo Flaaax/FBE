@@ -15,11 +15,10 @@ namespace FBE.Scripts.Cards;
 public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Token, TargetType.None)
 {
 	private string? _runtimeTitle;
-	private string? _runtimeProperty;
 	public override int MaxUpgradeLevel => 0;
 	public override bool CanBeGeneratedInCombat => false;
 	protected override Type PortraitOverride => typeof(TheD6);
-
+	
 	public int Index { get; private set; }
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -34,7 +33,6 @@ public class TheD6ChoiceCard() : FBECardModel(-1, CardType.Skill, CardRarity.Tok
 	{
 		AssertMutable();
 		_runtimeTitle = property;
-		_runtimeProperty = property;
 		Index = index;
 
 		((StringVar)DynamicVars["property"]).StringValue = property;
