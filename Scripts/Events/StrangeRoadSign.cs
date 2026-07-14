@@ -1,24 +1,17 @@
 using System.Diagnostics;
-using FBE.Scripts.Cards;
 using FBE.Scripts.Relics;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Gold;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Nodes.CommonUi;
-using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.ValueProps;
 
 namespace FBE.Scripts.Events;
 
@@ -92,11 +85,9 @@ public sealed class StrangeRoadSign : FBEEventModel
 
     private async Task GoDefend()
     {
-        Debug.Assert(Owner != null, nameof(Owner) + " != null");
-
         CardModel[] cards =
         [
-            Owner.RunState.CreateCard<Barricade>(Owner),
+            Owner!.RunState.CreateCard<Barricade>(Owner),
             Owner.RunState.CreateCard<Entrench>(Owner),
             Owner.RunState.CreateCard<BodySlam>(Owner)
         ];
@@ -111,9 +102,8 @@ public sealed class StrangeRoadSign : FBEEventModel
 
     private async Task RemoveSign()
     {
-        Debug.Assert(Owner != null, nameof(Owner) + " != null");
-        await PlayerCmd.GainGold(DynamicVars.Gold.IntValue, Owner);
-        await RelicCmd.Obtain<RemovedRoadSign>(Owner);
+        await PlayerCmd.GainGold(DynamicVars.Gold.IntValue, Owner!);
+        await RelicCmd.Obtain<RemovedRoadSign>(Owner!);
 
         SetEventFinished(PageDescription("DESTROY_SIGN_CHOSEN"));
     }

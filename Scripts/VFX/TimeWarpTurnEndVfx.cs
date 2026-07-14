@@ -51,7 +51,7 @@ public partial class TimeWarpTurnEndVfx : Control
 		};
 		vfx.BuildVisuals(iconTexture, borderTexture);
 		container.AddChild(vfx);
-		vfx.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+		vfx.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 	}
 
 	private void BuildVisuals(Texture2D iconTexture, Texture2D borderTexture)

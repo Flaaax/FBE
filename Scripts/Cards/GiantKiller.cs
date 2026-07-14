@@ -27,10 +27,12 @@ public class GiantKiller() : FBECardModel(2, CardType.Attack, CardRarity.Uncommo
 
 	// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 	private int ModifiedHealth => HasExactHealth
-		? Owner.Creature.CurrentHp * (Owner.RunState?.Players.Count ?? 1)
+		? Owner.Creature.CurrentHp * Owner.RunState.Players.Count
 		: 0;
 
-	private bool HasExactHealth => IsMutable;
+	// Card-library previews are mutable clones, but they do not have an owner.
+	// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+	private bool HasExactHealth => IsMutable && Owner is not null;
 
 	private bool IsCriticalTarget(Creature? target) =>
 		target is not null && target.CurrentHp > ModifiedHealth;

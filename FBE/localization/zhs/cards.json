@@ -1,6 +1,6 @@
 {
 	"FBE-YEARS.title": "岁月",
-	"FBE-YEARS.description": "回合开始时，如果这张牌在你[gold]手牌[/gold]，则结束回合，并获得一个额外回合。",
+	"FBE-YEARS.description": "回合开始时，如果这张牌在你[gold]手牌[/gold]，则立刻结束你的回合，并获得一个额外回合。",
 	"RAINBOW.title": "彩虹",
 	"RAINBOW.description": "获得{Repeat:diff()}个被随机填满的充能球栏位。\n回合开始时，失去[gold]其中[/gold]一个充能球栏位。",
 	"COOLANT.title": "冷却剂",

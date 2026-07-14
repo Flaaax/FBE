@@ -23,6 +23,10 @@
 
 [游戏源代码](https://github.com/Flaaax/STS2-source)
 
+## 本地创意工坊
+
+D:\Steam\steamapps\workshop\content\2868840
+
 ## TODO
 
 为DarkBum添加帧动画   OK
