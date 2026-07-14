@@ -15,7 +15,7 @@ class PHD : FBERelicModel
 {
 	public override RelicRarity Rarity => RelicRarity.Common;
 	
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1)];
+	protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(2)];
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.ForEnergy(this)];
 

@@ -115,6 +115,9 @@
     <ItemGroup Condition="'$(EnableJmcDispatch)' == 'true'">
         <JmcDispatchRuntime Include="__placeholder__"/>
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="fbe_eng_localization.patch" />
+    </ItemGroup>
 
     <!--
     <ItemGroup>

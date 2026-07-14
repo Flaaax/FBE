@@ -1,8 +1,11 @@
+
 # Flaaax's Better Experience
 
 
 
-FBE 是一个自用扩展mod，包含原版`卡牌/事件/遗物`的改动和新增的`卡牌/事件/遗物`。
+FBE 是一个支持联机的扩展 Mod。支持版本 0.108.0（Beta） 和 0.107.1。
+
+包含对原版内容的改动和新增内容。
 
 
 ## 原版改动
@@ -30,12 +33,59 @@ FBE 是一个自用扩展mod，包含原版`卡牌/事件/遗物`的改动和新
   汇集、东征、巨人杀手、招商引资、操控现实、岁月、六面骰、二十面骰
 - 遗物：高礼帽
 - 事件：时间的回响、奇怪的路标、恶魔房、无迹之塔
+- 更多没列举的内容...
 
 
 ## 原版BUG修复
 
-- 通过**乱战**打出**虚空形态**，或者激活**岁月**时导致的状态不同步
+- 通过**乱战**打出**虚空形态**时导致的状态不同步
 
 ## 声明
 
-图片素材使用AI，英文本地化也是AI提供。
+- 图片素材和英文本地化来自AI。
+
+---
+
+# Flaaax's Better Experience
+
+FBE is a multiplayer-compatible expansion mod. It supports versions 0.108.0 (Beta) and 0.107.1.
+
+It includes changes to vanilla content as well as new content.
+
+
+## Vanilla Changes
+
+| Item | Change |
+| ---- | ------ |
+| `Acrobatics` | Rarity changed to Common |
+| `Snakebite` | Values changed to 8/11 |
+| `EternalArmor` | Values changed to 10/13; changed to a Skill card |
+| `Bolas` | Values changed to 7/10 |
+| `RollingBoulder` | Costs 1 less Energy; values increased |
+| `Mayhem` | Costs 1 less Energy |
+| `BladeDance` | Upgrade changed to: gains Retain |
+| `Rainbow` | Reworked |
+| `Coolant` | Reworked |
+| `Genesis` | Reworked as `Genesis2` |
+| `BouncingFlask` | More hits, less Poison per hit |
+| `TestSubject` | Gains less Strength in multiplayer |
+| `SwordOfStone` | Reworked as `SwordOfStoneMk2` |
+
+## New Content
+
+- Cards: `Demon`, `HaDouKen`, `Industry`, `Serum`, `StaticDischarge`,
+  `BloodFeud`, `TimeFall`, `DeadTissue`, `KeepingAHand`, `Repatriate`, `UnrealEngine`,
+  `UnlimitedBladeWorks`, `Aggregate`, `Crusade`, `GiantKiller`, `InvestmentPromotion`,
+  `MasterReality`, `Years`, `TheD6`, `TheD20`
+- Relic: `TopHat`
+- Events: `EchoesOfTime`, `StrangeRoadSign`, `DevilRoom`, `QuantumTower`
+- And more content not listed here...
+
+
+## Vanilla Bug Fixes
+
+- Fixed state desynchronization caused by playing `VoidForm` through `Mayhem`
+
+## Disclaimer
+
+- Image assets and English localization were created with AI.
