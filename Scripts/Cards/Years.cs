@@ -1,5 +1,6 @@
 ﻿using FBE.Scripts.Powers;
 using FBE.Scripts.Utils;
+using FBE.Scripts.VFX;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -34,6 +35,7 @@ public class Years() : FBECardModel(-1, CardType.Curse, CardRarity.Curse, Target
 
         AudioHelper.Play("res://FBE/audio/SOTE_SFX_EndTurn_v2.ogg");
         AudioHelper.Play("res://FBE/audio/STS_SFX_TimeWarp_v2.ogg");
+        TimeWarpTurnEndVfx.Play();
 
         await Cmd.Wait(0.25f);
     }
